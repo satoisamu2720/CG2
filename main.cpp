@@ -5,8 +5,12 @@
 #include <d3d12.h>
 #include <dxgi1_6.h>
 #include <cassert>
+#include <dxgidebug.h>
+
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
+#pragma comment(lib,"dxguid.lib")
+
 
 
 //ログの関数
@@ -106,6 +110,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		wc.hInstance,
 		nullptr
 	);
+#ifdef _DEBUG
+	ID3D12Debug1* debugController = nullptr;
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
+		//デバックレイヤーを有効化する
+		debugController->EnableDebugLayer();
+		//さらにGPU側でもチェックを行うようにする
+		debugController->SetEnableGPUBasedValidation(TRUE);
+		
+		
+	}
+#endif // DEBUG
+
 	//ウィンドウを表示する
 	ShowWindow(hwnd, SW_SHOW);
 
@@ -157,6 +173,32 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	}
 	assert(device != nullptr);
 	Log("Complete create D3D12Device!!!\n");
+#ifdef _DEBUG
+	ID3D12InfoQueue* infoQeue = nullptr;
+	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQeue)))) {
+		//やばいえらー時にとまる
+		infoQeue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+		//警告時にとまる
+		infoQeue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+		//解放
+		infoQeue->Release();
+		//制御するメッセージのID
+		D3D12_MESSAGE_ID denyIds[]{
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_INVALID_COMMAND_LIST_TYPE
+		};
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+		D3D12_INFO_QUEUE_FILTER filter{};
+		filter.DenyList.NumIDs = _countof(denyIds);
+		filter.DenyList.pIDList = denyIds;
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		//指定したメッセージの表示を制御する
+		infoQeue->PushStorageFilter(&filter);
+		//警告時に止まる
+		infoQeue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
+	}
+#endif // _DEBUG
+
 
 	//コマンドキューを生成する
 	ID3D12CommandQueue* commandQueue = nullptr;
@@ -220,10 +262,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 	//２つ目を作る
 	device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
 
-
+	//初期値０でFenceをつくる
+	ID3D12Fence* fence = nullptr;
+	uint64_t fenceValue = 0;
+	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
+	assert(SUCCEEDED(hr));
+	//FenceのSignalをもつためにイベントを作成する
+	HANDLE fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	assert(fenceEvent != nullptr);
 	MSG msg{};
 	//ウィンドウの✕ボタンが押されるまでループ
 	while (msg.message != WM_QUIT) {
+		
+
 		//Windowにメッセージじが来たら最優先で処理させる
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
 			TranslateMessage(&msg);
@@ -232,11 +283,31 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 		else {
 			//これから書き込むバックバッファのインデックスを取得
 			UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
+			//TransitonBarrierの設定
+			D3D12_RESOURCE_BARRIER barrier{};
+			//今回のバリアはTransition
+			barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+			//Noneにしておく
+			barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+			//バリアを張る対象のリソース。現在のバックバッファに対して行う
+			barrier.Transition.pResource = swapChainResources[backBufferIndex];
+			//現在のResourceState
+			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+			//のResourceState
+			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			//TransitionBarrierをはる
+			commandList->ResourceBarrier(1, &barrier);
 			//描画先のRTVを設定
 			commandList->OMSetRenderTargets(1, &rtvHandles[backBufferIndex], false, nullptr);
 			//指定した色で画面全体をクリアする
 			float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };
 			commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+			//画面に描く処理はすべて終わり、画面に映すので状態を遷移
+			//今回はRenderTargetからPresentにする
+			barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+			barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+			//TransitionBarrierをはる
+			commandList->ResourceBarrier(1, &barrier);
 			//コマンドリストの内容を確定させる。全てのコマンドを積んでからcloseすること
 			hr = commandList->Close();
 			assert(SUCCEEDED(hr));
@@ -245,12 +316,48 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 			commandQueue->ExecuteCommandLists(1, commandLists);
 			//GPUとOSに画面交代を行うよう通知する
 			swapChain->Present(1, 0);
+			//Fenceの値を更新
+			fenceValue++;
+			//GPUがここまでたどりついた時に、Fenceの値を指定した値に代入するようにSignalをおくる
+			commandQueue->Signal(fence, fenceValue);
+			//Fecncの値が指定したSignal値にたどりついているか確認する
+			// GetCompletedValueの初期値はFence作成時に渡した初期値
+			if (fence->GetCompletedValue() < fenceValue) {
+				//指定したSignalにたどりついていないので、たどりつくまで待つようにイベントを設定する
+				fence->SetEventOnCompletion(fenceValue, fenceEvent);
+				//イベント待つ
+				WaitForSingleObject(fenceEvent, INFINITE);
+			}
 			//次のフレーム用のコマンドリストを準備
 			hr = commandAllocator->Reset();
 			assert(SUCCEEDED(hr));
 			hr = commandList->Reset(commandAllocator, nullptr);
 			assert(SUCCEEDED(hr));
 		}
+	}
+	CloseHandle(fenceEvent);
+	fence->Release();
+	rtvDescriptorHeap->Release();
+	swapChainResources[0]->Release();
+	swapChainResources[1]->Release();
+	swapChain->Release();
+	commandList->Release();
+	commandAllocator->Release();
+	commandQueue->Release();
+	device->Release();
+	useAdapter->Release();
+	dxgiFactory->Release();
+#ifdef _DEBUG
+	debugController->Release();
+#endif // _DEBUG
+	CloseWindow(hwnd);
+	//リソースリークチェック
+	IDXGIDebug1* debug;
+	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug)))) {
+		debug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_APP, DXGI_DEBUG_RLO_ALL);
+		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
+		debug->Release();
 	}
 	return 0;
 
