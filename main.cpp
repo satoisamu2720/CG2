@@ -1,4 +1,5 @@
-
+//#include <Windows.h>
+//#include <cstdint>
 #include <string>
 #include <format>
 #include <d3d12.h>
@@ -165,10 +166,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	, LPSTR lpCmdLine, int nShowCmd)
 {
 	WNDCLASS wc{};
-	wc.lpfnWndProc = WindowProc;				  // ウィンドウプロージャ
-	wc.lpszClassName = L"CG2WindowClass";		  // ウィンドウクラス名
-	wc.hInstance = GetModuleHandle(nullptr);	  // インスタンスハンドル
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW);  // カーソル
+	// ウィンドウプロージャ
+	wc.lpfnWndProc = WindowProc;
+	// ウィンドウクラス名
+	wc.lpszClassName = L"CG2WindowClass";	
+	// インスタンスハンドル
+	wc.hInstance = GetModuleHandle(nullptr);	
+	// カーソル
+	wc.hCursor = LoadCursor(nullptr, IDC_ARROW); 
 
 	// ウィンドウクラスを登録する
 	RegisterClass(&wc);
@@ -179,6 +184,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 
 	// ウィンドウサイズを表す構造体にクライアント領域を入れる
 	RECT wrc = { 0,0,kClientWidth,kClientHeight };
+
 
 	// クライアント領域を元に実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
