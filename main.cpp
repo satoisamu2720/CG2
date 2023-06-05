@@ -5,7 +5,14 @@
 #include <cassert>
 #include <dxgidebug.h>
 #include <dxcapi.h>
+#include "WinApp.h"
 
+
+const char kWindowTitle[] = "CG2_00_03";
+
+	
+
+	
 #pragma comment(lib,"dxcompiler.lib")
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
@@ -143,63 +150,18 @@ IDxcBlob* CompileShader(
 	IDxcCompiler3* dxcCompiler,
 	IDxcIncludeHandler* includeHandler);
 
-// ウィンドウプロージャ
-LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
-{
-	// メッセージに対してゲームの固有処理を行う
-	switch (msg) {
-		// ウィンドウが破棄された
-	case WM_DESTROY:
-		// OSに対して、アプリの終了を通告する
-		PostQuitMessage(0);
-		return 0;
+
+
+//Windowsアプリでのエントリーポイント
+int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
+
+	
+	//初期化
+		WinApp::WindowView();
+	//ウィンドウのxが押されるまでループ
+	while (WinApp::ProccessMessage() == 0) {
+
 	}
-
-	// 標準のメッセージ処理を行う
-	return DefWindowProc(hwnd, msg, wparam, lparam);
-}
-
-// Windowsアプリでのエントリーポイント（main関数）
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
-	, LPSTR lpCmdLine, int nShowCmd)
-{
-	WNDCLASS wc{};
-	// ウィンドウプロージャ
-	wc.lpfnWndProc = WindowProc;
-	// ウィンドウクラス名
-	wc.lpszClassName = L"CG2WindowClass";	
-	// インスタンスハンドル
-	wc.hInstance = GetModuleHandle(nullptr);	
-	// カーソル
-	wc.hCursor = LoadCursor(nullptr, IDC_ARROW); 
-
-	// ウィンドウクラスを登録する
-	RegisterClass(&wc);
-
-	// クライアント領域のサイズ
-	const int32_t kClientWidth = 1280;
-	const int32_t kClientHeight = 720;
-
-	// ウィンドウサイズを表す構造体にクライアント領域を入れる
-	RECT wrc = { 0,0,kClientWidth,kClientHeight };
-
-
-	// クライアント領域を元に実際のサイズにwrcを変更してもらう
-	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
-	// ウィンドウの生成
-	HWND hwnd = CreateWindow(
-		wc.lpszClassName,		// 利用するクラス名
-		L"CG2",					// タイトルバーの文字
-		WS_OVERLAPPEDWINDOW,    // よく見るウィンドウスタイル
-		CW_USEDEFAULT,			// 表示X座標
-		CW_USEDEFAULT,			// 表示Y座標
-		wrc.right - wrc.left,   // ウィンドウ横幅
-		wrc.bottom - wrc.top,   // ウィンドウ縦幅
-		nullptr,				// 親ウィンドウハンドル
-		nullptr,				// メニューハンドル
-		wc.hInstance,			// インスタンスハンドル
-		nullptr);				// オプション
 
 #ifdef _DEBUG
 	ID3D12Debug1* debugController = nullptr;
@@ -212,8 +174,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	}
 #endif
 
-	// ウィンドウを表示する
-	ShowWindow(hwnd, SW_SHOW);
+	
 
 	// DXGIファクトリーの生成
 	IDXGIFactory7* dxgifactory = nullptr;
@@ -324,17 +285,19 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance
 	assert(SUCCEEDED(hr));
 
 	// スワップチェーンを生成する
+	WinApp* winapp = nullptr;
+	LRESULT* lresult = nullptr;
 	IDXGISwapChain4* swapChain = nullptr;
 	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	swapChainDesc.Width = kClientWidth;   // 画面の幅　ウィンドウのクライアント領域を同じものにしておく
-	swapChainDesc.Height = kClientHeight; // 画面の高さ　ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Width = winapp->kClientWidth;   // 画面の幅　ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Height = winapp->kClientHeight; // 画面の高さ　ウィンドウのクライアント領域を同じものにしておく
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; //色の形式
 	swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画のターゲットとして利用する
 	swapChainDesc.BufferCount = 2; // ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // モニタに移したら、中身を破棄
 	// コマンドキュー、ウィンドウハンドル、設定を渡して生成する
-	hr = dxgifactory->CreateSwapChainForHwnd(commandQueue, hwnd, &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	hr = dxgifactory->CreateSwapChainForHwnd(commandQueue,  ->hwnd, &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
 	assert(SUCCEEDED(hr));
 
 	// ディスクリプタヒープの生成
