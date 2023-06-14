@@ -34,7 +34,7 @@ void WinApp::WindowView() {
     AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
 
     //ウィンドウの生成
-    hwnd = CreateWindow(
+    hwnd_ = CreateWindow(
         wc.lpszClassName,//クラス名
         L"CG2",//タイトルバーの名前
         WS_OVERLAPPEDWINDOW,//ウィンドウスタイル
@@ -49,7 +49,7 @@ void WinApp::WindowView() {
     );
 
     //ウィンドウ表示
-    ShowWindow(hwnd, SW_SHOW);
+    ShowWindow(hwnd_, SW_SHOW);
 }
 
 int WinApp::ProccessMessage() {
@@ -68,4 +68,4 @@ int WinApp::ProccessMessage() {
     return false;
 }
 
-HWND WinApp::hwnd;
+HWND WinApp::hwnd_;

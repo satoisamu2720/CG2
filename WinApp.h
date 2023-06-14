@@ -13,8 +13,9 @@ public:
     static void WindowView();
 
     static int ProccessMessage();
+    HWND GetHwnd() const { return hwnd_; }
 
 private:
     static inline WNDCLASS wc{};// ウィンドウクラス
-    static HWND hwnd;
+    static HWND hwnd_;
 };
