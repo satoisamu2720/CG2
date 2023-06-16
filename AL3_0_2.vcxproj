@@ -14,6 +14,8 @@
     <ClCompile Include="DirectXCommon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyFunction.cpp" />
+    <ClCompile Include="secand.cpp" />
+    <ClCompile Include="Shadr.cpp" />
     <ClCompile Include="WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,6 +35,7 @@
   <ItemGroup>
     <ClInclude Include="DirectXCommon.h" />
     <ClInclude Include="MyFunction.h" />
+    <ClInclude Include="Shadr.h" />
     <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

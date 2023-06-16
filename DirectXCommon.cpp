@@ -1,7 +1,7 @@
 #include "DirectXCommon.h"
+#include "Shadr.h"
 
 
-WinApp* DirectXCommon::winApp_;
 IDXGIFactory7* DirectXCommon::dxgifactory;
 HRESULT DirectXCommon::hr;
 IDXGIAdapter4* DirectXCommon::useAdapter;
@@ -17,17 +17,20 @@ uint64_t DirectXCommon::fenceValue;
 HANDLE DirectXCommon::fenceEvent;
 ID3D12Debug1* DirectXCommon::debugController;
 IDXGIDebug1* DirectXCommon::debug;
+IDxcBlob* Shadr::vertexShaderBlob;
+IDxcBlob* Shadr::pixelShaderBlob;
+IDxcIncludeHandler* Shadr::includeHandler;
+ID3D12Resource* Shadr::vertexResource;
+ID3D12PipelineState* Shadr::graphicsPipelineState;
+ID3D12RootSignature* Shadr::rootSignature;
+ID3DBlob* Shadr::errorBlob;
+ID3DBlob* Shadr::signatureBlob;
+D3D12_VIEWPORT viewPort{};
+D3D12_RECT scissorRect{};
+D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
 
-void DirectXCommon::DirectXInitialization()
+void DirectXCommon::Initialization(WinApp*winApp)
 {
-	InitializeDXGIDevice();
-	InitializeCommand();
-	CreateSwapChain();
-	PreDraw();
-}
-
-
-void DirectXCommon::InitializeDXGIDevice() {
 	HRESULT hr = S_FALSE;
 #ifdef _DEBUG
 	debugController = nullptr;
@@ -46,7 +49,7 @@ void DirectXCommon::InitializeDXGIDevice() {
 	dxgifactory = nullptr;
 	// HRESULTはWindow系のエラーであり
 	// 関数が成功したかどうかをSUCCEEDEDマクロで判定ができる
-	 hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgifactory));
+	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgifactory));
 	// 初期化処理の根本的な部分でエラーが出た場合はプログラムが間違っているか
 	// どうにでもできない場合があるのでassertにしておく
 	assert(SUCCEEDED(hr));
@@ -128,14 +131,10 @@ void DirectXCommon::InitializeDXGIDevice() {
 		infoQueue->Release();
 	}
 #endif
-}
-
-
-void DirectXCommon::InitializeCommand() {
 	HRESULT hr = S_FALSE;
 	// コマンドキューを生成する
 	commandQueue = nullptr;
-	hr= device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
+	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
 	// コマンドキューの生成がうまくいかなかった場合
 	assert(SUCCEEDED(hr));
 
@@ -151,10 +150,6 @@ void DirectXCommon::InitializeCommand() {
 		IID_PPV_ARGS(&commandList));
 	// コマンドリストの生成がうまくいかなかった場合
 	assert(SUCCEEDED(hr));
-}
-
-
-void DirectXCommon::CreateSwapChain() {
 	// スワップチェーンを生成する
 	HRESULT hr = S_FALSE;
 
@@ -168,7 +163,7 @@ void DirectXCommon::CreateSwapChain() {
 	swapChainDesc.BufferCount = 2; // ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // モニターにうつしたら、中身を破棄
 	// コマンドキュー、ウィンドウハンドル、設定して渡して生成
-	hr = dxgifactory->CreateSwapChainForHwnd(commandQueue, winApp_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	hr = dxgifactory->CreateSwapChainForHwnd(commandQueue, winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
 	assert(SUCCEEDED(hr));
 
 
@@ -186,12 +181,6 @@ void DirectXCommon::CreateSwapChain() {
 	assert(SUCCEEDED(hr));
 	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
 	assert(SUCCEEDED(hr));
-
-}
-
-
-void DirectXCommon::PreDraw() {
-	
 	HRESULT hr = S_FALSE;
 
 	//RTVの設定
@@ -231,6 +220,16 @@ void DirectXCommon::PreDraw() {
 	//指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色、RGBA順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
+	commandList->RSSetViewports(1, &viewPort); // Viewportを設定
+	commandList->RSSetScissorRects(1, &scissorRect); // Scissorを設定
+	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
+	commandList->SetGraphicsRootSignature(rootSignature);
+	commandList->SetPipelineState(graphicsPipelineState); // PSOを設定
+	commandList->IASetVertexBuffers(0, 1, &vertexBufferView); // VBVを設定
+	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い
+	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	// 描画！（DrawCall・ドローコール）。3頂点で1つのインスタンス。インスタンスについては今後
+	commandList->DrawInstanced(3, 1, 0, 0);
 	//画面描画処理の終わり、状態を遷移
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -263,10 +262,7 @@ void DirectXCommon::PreDraw() {
 	assert(SUCCEEDED(hr));
 	hr = commandList->Reset(commandAllocator, nullptr);
 	assert(SUCCEEDED(hr));
-}
 
-void DirectXCommon::CreateFence()
-{
 	HRESULT hr = S_FALSE;
 
 	//初期値0でFenceを作る
@@ -279,12 +275,18 @@ void DirectXCommon::CreateFence()
 	//FenceのSignalを持つためにイベントを作成する
 	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
-}
-
-void DirectXCommon::Release()
-{
 	CloseHandle(fenceEvent);
 	fence->Release();
+	vertexResource->Release();
+	graphicsPipelineState->Release();
+	signatureBlob->Release();
+	if (errorBlob)
+	{
+		errorBlob->Release();
+	}
+	rootSignature->Release();
+	pixelShaderBlob->Release();
+	vertexShaderBlob->Release();
 	rtvDescriptorHeap->Release();
 	swapChainResources[0]->Release();
 	swapChainResources[1]->Release();
@@ -298,13 +300,9 @@ void DirectXCommon::Release()
 #ifdef _DEBUG
 	debugController->Release();
 #endif
-	CloseWindow(winApp_->GetHwnd());
+	CloseWindow(winApp->GetHwnd());
 
 	ResourceCheck();
-}
-
-void DirectXCommon::ResourceCheck()
-{
 	//リソースチェック
 	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
 	{
@@ -313,4 +311,40 @@ void DirectXCommon::ResourceCheck()
 		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 		debug->Release();
 	}
+}
+
+
+void DirectXCommon::CreateSwapChain(WinApp* winApp) {
+	
+}
+
+void DirectXCommon::Release()
+{
+	
+}
+
+
+void DirectXCommon::InitializeDXGIDevice() {
+	
+}
+
+
+void DirectXCommon::InitializeCommand() {
+	
+}
+
+
+void DirectXCommon::PreDraw() {
+	
+	
+}
+
+void DirectXCommon::CreateFence()
+{
+	
+}
+
+void DirectXCommon::ResourceCheck()
+{
+	
 }

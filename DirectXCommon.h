@@ -22,51 +22,14 @@ public: // メンバ関数
 	static const int32_t kClientWidth = 1280;
 	static const int32_t kClientHeight = 720;
 	
-	//static void Log(const std::string& message);
 	/// <summary>
 	/// 
 	/// </summary>
-	static void PreDraw();
-
-	/// <summary>
-	/// 
-	/// </summary>
-	static void DirectXInitialization();
-	/// <summary>
-	/// 
-	/// </summary>
-	static void InitializeDXGIDevice();
-
-	/// <summary>
-	/// 
-	/// </summary>
-	static void CreateSwapChain();
-
-	/// <summary>
-	/// 
-	/// </summary>
-	static void InitializeCommand();
-
-
-	/// <summary>
-	///
-	/// </summary>
-	static void Release();
-
-
-	/// <summary>
-	///
-	/// </summary>
-	static void ResourceCheck();
-
-	/// <summary>
-	/// フェンス生成
-	/// </summary>
-	static void CreateFence();
+	static void Initialization(WinApp* winApp);
+	
 
 private: // メンバ関数
 
-	static WinApp* winApp_;
 	static ID3D12Device* device;
 	static LRESULT lresult;
 	static IDXGISwapChain4* swapChain;
@@ -83,8 +46,23 @@ private: // メンバ関数
 	static ID3D12GraphicsCommandList* commandList;
 	static ID3D12CommandAllocator* commandAllocator;
 	static IDXGIDebug1* debug;
+	
 	static inline DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
 	static inline D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 	static inline D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
+
+
+	static ID3D12Resource* vertexResource;
+	static ID3D12PipelineState* graphicsPipelineState;
+	static ID3DBlob* signatureBlob;
+	static ID3DBlob* errorBlob;
+	static ID3D12RootSignature* rootSignature;
+	static IDxcBlob* vertexShaderBlob;
+	static IDxcBlob* pixelShaderBlob;
+	static inline D3D12_VIEWPORT viewPort{};
+	static inline D3D12_RECT scissorRect{};
+	static inline D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+
+
 };
 
