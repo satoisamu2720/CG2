@@ -3,19 +3,12 @@
 
 const char kWindowTitle[] = "CG2_00_03";
 
+
 //Windowsアプリでのエントリーポイント
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//初期化
-	WinApp* winApp = new WinApp();
 	
-	DirectXCommon* directXCommon = new DirectXCommon();
-
-
-	directXCommon->InitializeCommand(winApp);
-
-	//App::WindowView();
-	
-	//DirectXCommon::Initialization();
+	DirectXCommon::Initialize();
 
 	MSG msg{};
 	// ウィンドウのｘボタンが押されるまでループ

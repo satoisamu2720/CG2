@@ -1,172 +1,181 @@
 #include "DirectXCommon.h"
 #include "Shadr.h"
 
-
+HWND hwnd_;
+ID3D12Debug1* DirectXCommon::debugController;
 IDXGIFactory7* DirectXCommon::dxgifactory;
-HRESULT DirectXCommon::hr;
 IDXGIAdapter4* DirectXCommon::useAdapter;
 ID3D12Device* DirectXCommon::device;
+ID3D12InfoQueue* DirectXCommon::infoQueue;
+ID3D12Resource* DirectXCommon::swapChainResources[2];
 ID3D12CommandQueue* DirectXCommon::commandQueue;
+	
 ID3D12CommandAllocator* DirectXCommon::commandAllocator;
 ID3D12GraphicsCommandList* DirectXCommon::commandList;
 IDXGISwapChain4* DirectXCommon::swapChain;
-ID3D12Resource* DirectXCommon::swapChainResources[2];
+
 ID3D12DescriptorHeap* DirectXCommon::rtvDescriptorHeap;
-ID3D12Fence* DirectXCommon::fence;
 uint64_t DirectXCommon::fenceValue;
 HANDLE DirectXCommon::fenceEvent;
-ID3D12Debug1* DirectXCommon::debugController;
+ID3D12Fence* DirectXCommon::fence;
+WinApp* DirectXCommon::winApp_;
 IDXGIDebug1* DirectXCommon::debug;
-IDxcBlob* Shadr::vertexShaderBlob;
-IDxcBlob* Shadr::pixelShaderBlob;
-IDxcIncludeHandler* Shadr::includeHandler;
-ID3D12Resource* Shadr::vertexResource;
-ID3D12PipelineState* Shadr::graphicsPipelineState;
-ID3D12RootSignature* Shadr::rootSignature;
-ID3DBlob* Shadr::errorBlob;
-ID3DBlob* Shadr::signatureBlob;
-D3D12_VIEWPORT viewPort{};
-D3D12_RECT scissorRect{};
-D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
+int32_t kClientAreaWidth_;
+int32_t kClientAreaHeight_;
+HRESULT DirectXCommon::hr;
 
-void DirectXCommon::Initialization(WinApp*winApp)
+void DirectXCommon::Initialize()
 {
-	HRESULT hr = S_FALSE;
+	winApp_= new WinApp();
+	winApp_->WindowView( 1280, 720 );
+
+	ChooseDXGIFactory();
+	ChooseAdapter();
+	CreateDevice();
+	CreateCommand();
+	CreateSwapChain();
+	CreateFinalRenderTargets();
+	ResourceCheck();
 #ifdef _DEBUG
+	
+	
 	debugController = nullptr;
 	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
 	{
-		// デバッグレイヤを有効化する
+		// デバッグレイヤーを有効化する
 		debugController->EnableDebugLayer();
-		// さらにGPu側でもチェックを行うようにする
+		// さらにGPU側でもチェックを行うようにする
 		debugController->SetEnableGPUBasedValidation(TRUE);
 	}
-#endif
+#endif // _DEBUG
+}
 
-
+void DirectXCommon::ChooseDXGIFactory() {
+	hr = S_FALSE;
 
 	//DXGIファクトリーの生成
 	dxgifactory = nullptr;
-	// HRESULTはWindow系のエラーであり
-	// 関数が成功したかどうかをSUCCEEDEDマクロで判定ができる
+	// HRESULTはWindow系のエラーコードであり
+	//関数が成功したかどうかをSUCCEEDEDマクロで判定出来る
 	hr = CreateDXGIFactory(IID_PPV_ARGS(&dxgifactory));
-	// 初期化処理の根本的な部分でエラーが出た場合はプログラムが間違っているか
-	// どうにでもできない場合があるのでassertにしておく
+	//初期化の根本的な部分でエラーが出た場合はプログラムが間違っているか、どうにも出来ない場合が多いのでassertにしておく
 	assert(SUCCEEDED(hr));
+}
 
-	// 使用するアダプタ用の変数、最初にnullptrを入れておく
-	useAdapter = nullptr;
-
-	// 良い順にアダプタを頼む
-	for (UINT i = 0; dxgifactory->EnumAdapterByGpuPreference(i, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) != DXGI_ERROR_NOT_FOUND; i++)
+void DirectXCommon::ChooseAdapter() {
+	//使用するアダプタ用の変数。最初にnullptrを入れておく
+	 useAdapter = nullptr;
+	//良い順にアダプタを頼む
+	for (UINT i = 0; dxgifactory->EnumAdapterByGpuPreference(i,
+		DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&useAdapter)) !=
+		DXGI_ERROR_NOT_FOUND; i++)
 	{
-		// アダプターの情報を取得する
+		//アダプターの情報を取得する
 		DXGI_ADAPTER_DESC3 adapterDesc{};
 		hr = useAdapter->GetDesc3(&adapterDesc);
-		assert(SUCCEEDED(hr)); // 取得できないのは一大事
+		assert(SUCCEEDED(hr));//取得出来ないのは一大事
 
-		// ソフトウェアアダプタでなければ採用
-		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)) {
+		//ソフトウェアアダプタでなければ採用
+		if (!(adapterDesc.Flags & DXGI_ADAPTER_FLAG3_SOFTWARE))
+		{
 			//採用したアダプタの情報をログに出力。wstringの方なので注意
 			Log(ConvertString(std::format(L"Use Adapter:{}\n", adapterDesc.Description)));
 			break;
 		}
-		useAdapter = nullptr; // ソフトウェアアダプタの場合は見なかったことにする
+		useAdapter = nullptr;//ソフトウェアアダプタの場合は見なかった事にする
 	}
-	// 適切なアダプタが見つからなかったので起動できない
+	//適切なアダプタが見つからなかったので起動できない
 	assert(useAdapter != nullptr);
+}
 
-
-	// 機能レベルとログ出力の文字列
+void DirectXCommon::CreateDevice() {
+	hr = S_FALSE;
+	 device = nullptr;
+	//機能レベルとログ出力用の文字列
 	D3D_FEATURE_LEVEL featureLevels[] = {
-		D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0 };
-
+		D3D_FEATURE_LEVEL_12_2,D3D_FEATURE_LEVEL_12_1,D3D_FEATURE_LEVEL_12_0
+	};
 	const char* featureLevelStrings[] = { "12.2","12.1","12.0" };
-	// 高い順に生成できるか試していく
+	//高い順に生成できるか試していく
 	for (size_t i = 0; i < _countof(featureLevels); ++i)
 	{
-		// 採用したアダプターでデバイスを生成
+		//採用したアダプターでデバイスを生成
 		hr = D3D12CreateDevice(useAdapter, featureLevels[i], IID_PPV_ARGS(&device));
-		if (SUCCEEDED(hr)) {
-			// 生成できたのでログ出力を行ってループを抜ける
-			Log(std::format("featureLevel : {}\n", featureLevelStrings[i]));
+		//指定した機能レベルでデバイスが生成出来たかを確認
+		if (SUCCEEDED(hr))
+		{
+			//生成出来たのでログ出力を行ってループを抜ける
+			Log(std::format("FeatureLevel : {}\n", featureLevelStrings[i]));
 			break;
 		}
 	}
-
+	//デバイスの生成がうまくいかなかったので起動出来ない
 	assert(device != nullptr);
-	Log("Complete Creates D3D12Device!!\n");
-
+	Log("Complete create D3D12Device!!!\n");//初期化完了のログをだす
 #ifdef _DEBUG
-	ID3D12InfoQueue* infoQueue = nullptr;
-	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue))))
-	{
-		// ヤバイエラー時に止まる
+	 infoQueue = nullptr;
+	if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+		//ヤバイエラーで止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
-		// エラー時に止まる
+		//エラーで止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
-		// 警告時に止まる
+		//警告時に止まる
 		infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
-		//
-		// 上記文をコメントアウトすることで詳細なエラーを出力できる
-		//
-
-		// 抑制するメッセージのID
+		//抑制するメッセージID
 		D3D12_MESSAGE_ID denyIds[] = {
-			// windows11でのDXGIデバッグレイヤとDX12デバッグレイヤの相互作用バグによるエラーメッセージ
-			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE };
-
-		// 抑制するレベル
-		D3D12_MESSAGE_SEVERITY severitites[] = { D3D12_MESSAGE_SEVERITY_INFO };
+			D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+		};
+		//抑制するレベル
+		D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
 		D3D12_INFO_QUEUE_FILTER filter{};
 		filter.DenyList.NumIDs = _countof(denyIds);
 		filter.DenyList.pIDList = denyIds;
-		filter.DenyList.NumSeverities = _countof(severitites);
-		filter.DenyList.pSeverityList = severitites;
-		// 指定したメッセージの表示を抑制する
+		filter.DenyList.NumSeverities = _countof(severities);
+		filter.DenyList.pSeverityList = severities;
+		//指定したメッセージの表示を抑制する
 		infoQueue->PushStorageFilter(&filter);
-
-		// 解放
+		//解放
 		infoQueue->Release();
 	}
-#endif
-	HRESULT hr = S_FALSE;
+#endif // _DEBUG
+}
+
+void DirectXCommon::CreateCommand(){
+	hr = S_FALSE;
 	// コマンドキューを生成する
 	commandQueue = nullptr;
 	hr = device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&commandQueue));
-	// コマンドキューの生成がうまくいかなかった場合
+	// コマンドキューの生成がうまくいかなかったので起動できない
 	assert(SUCCEEDED(hr));
 
-	// コマンドアロケータ
-	commandAllocator = nullptr;
+	// コマンドアプリケータを生成する
+	 commandAllocator = nullptr;
 	hr = device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&commandAllocator));
-	// コマンドアロケータの生成がうまくいかなかった場合
+	// コマンドアロケータの生成がうまくいかなかったので起動できない
 	assert(SUCCEEDED(hr));
 
-	// コマンドリストを生成する
-	commandList = nullptr;
-	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr,
-		IID_PPV_ARGS(&commandList));
-	// コマンドリストの生成がうまくいかなかった場合
+	// コマンドリストの生成
+	 commandList = nullptr;
+	hr = device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, commandAllocator, nullptr, IID_PPV_ARGS(&commandList));
+	// コマンドリストの生成がうまくいかなかったので起動できない
 	assert(SUCCEEDED(hr));
-	// スワップチェーンを生成する
-	HRESULT hr = S_FALSE;
+}
 
+void DirectXCommon::CreateSwapChain() {
+	hr = S_FALSE;
 	// スワップチェーンを生成する
 	swapChain = nullptr;
-	swapChainDesc.Width = kClientWidth;   // 画面の幅。ウィンドウのクライアント領域を同じものにしておく
-	swapChainDesc.Height = kClientHeight; // 画面の高さ。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Width = winApp_->GetkClientAreaWidth(); // 画面の幅。ウィンドウのクライアント領域を同じものにしておく
+	swapChainDesc.Height = winApp_->GetkClientAreaHeight(); // 画面の高さ。ウィンドウのクライアント領域を同じものにしておく
 	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 色の形式
 	swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
 	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT; // 描画ターゲットとして利用
 	swapChainDesc.BufferCount = 2; // ダブルバッファ
 	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD; // モニターにうつしたら、中身を破棄
 	// コマンドキュー、ウィンドウハンドル、設定して渡して生成
-	hr = dxgifactory->CreateSwapChainForHwnd(commandQueue, winApp->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
+	hr = dxgifactory->CreateSwapChainForHwnd(commandQueue, winApp_->GetHwnd(), &swapChainDesc, nullptr, nullptr, reinterpret_cast<IDXGISwapChain1**>(&swapChain));
 	assert(SUCCEEDED(hr));
-
-
 	// ディスクリプタヒープの生成
 	rtvDescriptorHeap = nullptr;
 	rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV; // レンダーターゲットビュー用
@@ -175,14 +184,17 @@ void DirectXCommon::Initialization(WinApp*winApp)
 	assert(SUCCEEDED(hr));
 
 	// SwapchainからResourceを引っ張ってくる
-	swapChainResources[2] = { nullptr };
+	swapChainResources[0] =nullptr;
+	swapChainResources[1] = nullptr;
 
 	hr = swapChain->GetBuffer(0, IID_PPV_ARGS(&swapChainResources[0]));
 	assert(SUCCEEDED(hr));
 	hr = swapChain->GetBuffer(1, IID_PPV_ARGS(&swapChainResources[1]));
 	assert(SUCCEEDED(hr));
-	HRESULT hr = S_FALSE;
-
+}
+void DirectXCommon::CreateFinalRenderTargets() {
+	CreateFence();
+	hr = S_FALSE;
 	//RTVの設定
 	D3D12_RENDER_TARGET_VIEW_DESC rtvDesc{};
 	rtvDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;//出力情報をSRGBに変換して書き込む
@@ -198,7 +210,6 @@ void DirectXCommon::Initialization(WinApp*winApp)
 	rtvHandles[1].ptr = rtvHandles[0].ptr + device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	//２つ目を生成
 	device->CreateRenderTargetView(swapChainResources[1], &rtvDesc, rtvHandles[1]);
-
 	//書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain->GetCurrentBackBufferIndex();
 	//TransitionBarrierの設定
@@ -220,16 +231,6 @@ void DirectXCommon::Initialization(WinApp*winApp)
 	//指定した色で画面全体をクリアする
 	float clearColor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色、RGBA順
 	commandList->ClearRenderTargetView(rtvHandles[backBufferIndex], clearColor, 0, nullptr);
-	commandList->RSSetViewports(1, &viewPort); // Viewportを設定
-	commandList->RSSetScissorRects(1, &scissorRect); // Scissorを設定
-	//RootSignatureを設定。PSOに設定しているけど別途設定が必要
-	commandList->SetGraphicsRootSignature(rootSignature);
-	commandList->SetPipelineState(graphicsPipelineState); // PSOを設定
-	commandList->IASetVertexBuffers(0, 1, &vertexBufferView); // VBVを設定
-	//形状を設定。PSOに設定しているものとはまた別。同じものを設定すると考えておけば良い
-	commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	// 描画！（DrawCall・ドローコール）。3頂点で1つのインスタンス。インスタンスについては今後
-	commandList->DrawInstanced(3, 1, 0, 0);
 	//画面描画処理の終わり、状態を遷移
 	barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
@@ -239,7 +240,7 @@ void DirectXCommon::Initialization(WinApp*winApp)
 	hr = commandList->Close();
 	assert(SUCCEEDED(hr));
 
-	CreateFence();
+	
 
 	//GPUにコマンドリストを実行させる
 	ID3D12CommandList* commandLists[] = { commandList };
@@ -250,6 +251,11 @@ void DirectXCommon::Initialization(WinApp*winApp)
 	fenceValue++;
 	//GPUがここまで辿り着いた時、Fenceの値を指定した値に代入するようにsignalを送る
 	commandQueue->Signal(fence, fenceValue);
+	//次のフレーム用のコマンドリストを準備
+	hr = commandAllocator->Reset();
+	assert(SUCCEEDED(hr));
+	hr = commandList->Reset(commandAllocator, nullptr);
+	assert(SUCCEEDED(hr));
 	//Fenceの値が指定したsignal値に辿り着いているか確認する
 	if (fence->GetCompletedValue() < fenceValue) {
 		//指定したsignalに辿り着いていないので、辿り着くまで待つようにイベントを設定する
@@ -257,36 +263,27 @@ void DirectXCommon::Initialization(WinApp*winApp)
 		//イベントを待つ
 		WaitForSingleObject(fenceEvent, INFINITE);
 	}
-	//次のフレーム用のコマンドリストを準備
-	hr = commandAllocator->Reset();
-	assert(SUCCEEDED(hr));
-	hr = commandList->Reset(commandAllocator, nullptr);
-	assert(SUCCEEDED(hr));
+	
+}
 
-	HRESULT hr = S_FALSE;
-
+void DirectXCommon::CreateFence()
+{
+	hr = S_FALSE;
 	//初期値0でFenceを作る
 	fence = nullptr;
 	fenceValue = 0;
 	hr = device->CreateFence(fenceValue, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 	assert(SUCCEEDED(hr));
-
-
 	//FenceのSignalを持つためにイベントを作成する
 	fenceEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	assert(fenceEvent != nullptr);
+}
+
+void DirectXCommon::Release()
+{
+	//解放処理
 	CloseHandle(fenceEvent);
 	fence->Release();
-	vertexResource->Release();
-	graphicsPipelineState->Release();
-	signatureBlob->Release();
-	if (errorBlob)
-	{
-		errorBlob->Release();
-	}
-	rootSignature->Release();
-	pixelShaderBlob->Release();
-	vertexShaderBlob->Release();
 	rtvDescriptorHeap->Release();
 	swapChainResources[0]->Release();
 	swapChainResources[1]->Release();
@@ -299,10 +296,14 @@ void DirectXCommon::Initialization(WinApp*winApp)
 	dxgifactory->Release();
 #ifdef _DEBUG
 	debugController->Release();
-#endif
-	CloseWindow(winApp->GetHwnd());
+#endif // _DEBUG
+	CloseWindow(winApp_->GetHwnd());
 
 	ResourceCheck();
+}
+
+void DirectXCommon::ResourceCheck()
+{
 	//リソースチェック
 	if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&debug))))
 	{
@@ -311,40 +312,4 @@ void DirectXCommon::Initialization(WinApp*winApp)
 		debug->ReportLiveObjects(DXGI_DEBUG_D3D12, DXGI_DEBUG_RLO_ALL);
 		debug->Release();
 	}
-}
-
-
-void DirectXCommon::CreateSwapChain(WinApp* winApp) {
-	
-}
-
-void DirectXCommon::Release()
-{
-	
-}
-
-
-void DirectXCommon::InitializeDXGIDevice() {
-	
-}
-
-
-void DirectXCommon::InitializeCommand() {
-	
-}
-
-
-void DirectXCommon::PreDraw() {
-	
-	
-}
-
-void DirectXCommon::CreateFence()
-{
-	
-}
-
-void DirectXCommon::ResourceCheck()
-{
-	
 }

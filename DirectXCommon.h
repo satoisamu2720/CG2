@@ -14,55 +14,44 @@
 #pragma comment(lib,"d3d12.lib")
 #pragma comment(lib,"dxgi.lib")
 
-
-
 class DirectXCommon
 {
 public: // メンバ関数
-	static const int32_t kClientWidth = 1280;
-	static const int32_t kClientHeight = 720;
-	
-	/// <summary>
-	/// 
-	/// </summary>
-	static void Initialization(WinApp* winApp);
-	
+	static void Initialize();
+	static void ChooseDXGIFactory();
+	static void ChooseAdapter();
+	static void CreateDevice();
+	static void CreateCommand();
+	static void CreateSwapChain();
+	static void CreateFinalRenderTargets();
+	static void CreateFence();
+	static void Release();
+	static void ResourceCheck();
 
-private: // メンバ関数
 
-	static ID3D12Device* device;
-	static LRESULT lresult;
-	static IDXGISwapChain4* swapChain;
-	static ID3D12CommandQueue* commandQueue;
+private: // メンバ変数
+	static HWND hwnd_;
+	static ID3D12Debug1* debugController;
 	static IDXGIFactory7* dxgifactory;
-	static HRESULT hr;
-	static ID3D12DescriptorHeap* rtvDescriptorHeap;
+	static IDXGIAdapter4* useAdapter;
+	static ID3D12Device* device;
+	static ID3D12InfoQueue* infoQueue;
 	static ID3D12Resource* swapChainResources[2];
-	static ID3D12Fence* fence;
+	static ID3D12CommandQueue* commandQueue;
+	static inline D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	static ID3D12CommandAllocator* commandAllocator;
+	static ID3D12GraphicsCommandList* commandList;
+	static IDXGISwapChain4* swapChain;
+	static inline DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	static ID3D12DescriptorHeap* rtvDescriptorHeap;
+	static inline D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
 	static uint64_t fenceValue;
 	static HANDLE fenceEvent;
-	static IDXGIAdapter4* useAdapter;
-	static ID3D12Debug1* debugController;
-	static ID3D12GraphicsCommandList* commandList;
-	static ID3D12CommandAllocator* commandAllocator;
-	static IDXGIDebug1* debug;
-	
-	static inline DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-	static inline D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
-	static inline D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc{};
-
-
-	static ID3D12Resource* vertexResource;
-	static ID3D12PipelineState* graphicsPipelineState;
-	static ID3DBlob* signatureBlob;
-	static ID3DBlob* errorBlob;
-	static ID3D12RootSignature* rootSignature;
-	static IDxcBlob* vertexShaderBlob;
-	static IDxcBlob* pixelShaderBlob;
-	static inline D3D12_VIEWPORT viewPort{};
-	static inline D3D12_RECT scissorRect{};
-	static inline D3D12_VERTEX_BUFFER_VIEW vertexBufferView{};
-
-
+	static ID3D12Fence* fence;
+	static WinApp* winApp_;
+	static IDXGIDebug1*debug;
+	static int32_t kClientAreaWidth_;
+	static int32_t kClientAreaHeight_;
+	static HRESULT hr;
 };
 
