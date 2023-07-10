@@ -1,15 +1,13 @@
 #pragma once
 #include "MyFunction.h"
 #include "DirectXCommon.h"
-
-
 class Shadr
 {
 public: // メンバ関数
 	/// <summary>
 	/// 
 	/// </summary>
-	static void ShadrInitialize();
+	static void Initialize();
 
 	/// <summary>
 	/// 
@@ -35,8 +33,6 @@ private: // メンバ関数
 	static IDxcBlob* shaderBlob;
 	static IDxcBlob* vertexShaderBlob;
 	static IDxcBlob* pixelShaderBlob;
-	//const std::wstring& filePath;
-	//const wchar_t* profile;
 	static IDxcUtils* dxcUtils;
 	static IDxcCompiler3* dxcCompiler;
 	static IDxcIncludeHandler* includeHandler;

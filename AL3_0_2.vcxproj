@@ -11,11 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CreateTriangle.cpp" />
     <ClCompile Include="DirectXCommon.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyFunction.cpp" />
-    <ClCompile Include="secand.cpp" />
-    <ClCompile Include="Shadr.cpp" />
     <ClCompile Include="WinApp.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -33,9 +33,11 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CreateTriangle.h" />
     <ClInclude Include="DirectXCommon.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="MyFunction.h" />
-    <ClInclude Include="Shadr.h" />
+    <ClInclude Include="Vector4.h" />
     <ClInclude Include="WinApp.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

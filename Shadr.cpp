@@ -18,7 +18,7 @@ struct Vector4 {
 	float z;
 	float w;
 };
-void Shadr::ShadrInitialize() {
+void Shadr::Initialize() {
 
 	
 
