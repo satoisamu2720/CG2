@@ -20,9 +20,6 @@ void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c) 
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//マテリアルCBufferの場所を指定
-	//dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView
-	
 	//描画
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 
