@@ -218,7 +218,7 @@ void Engine::ViewPort()
 {
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = winApp_->GetkClientWidth();
-	viewport_.Height = winApp_->GetkClientHeight();
+	viewport_.Height = winApp_->GetkClientWidth();
 	viewport_.TopLeftX = 0;
 	viewport_.TopLeftY = 0;
 	viewport_.MinDepth = 0.0f;
@@ -231,9 +231,8 @@ void Engine::ScissorRect()
 	scissorRect_.left = 0;
 	scissorRect_.right = winApp_->GetkClientWidth();
 	scissorRect_.top = 0;
-	scissorRect_.bottom = winApp_->GetkClientHeight();
+	scissorRect_.bottom = winApp_->GetkClientWidth();
 }
-
 void Engine::Initialize()
 {
 	for (int i = 0; i < 12; i++) {

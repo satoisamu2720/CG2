@@ -3,11 +3,7 @@
 
 const wchar_t kWindowTitle[] = { L"CG2" };
 
-typedef struct TRIANGLE_DATA {
-	Vector4 v1;
-	Vector4 v2;
-	Vector4 v3;
-};
+
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
@@ -26,17 +22,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	engin->Initialize();
 
-	Vector4 triangle1 = {-0.6f,0.2f,0.0f,2.0f};
+	Vector4 triangle1 = {-0.6f,0.8f,0.0f,2.0f};
 	Vector4 triangle2 = { 0.0f,1.8f,0.0f,2.0f };
-	Vector4 triangle3 = { 0.6f,0.2f,0.0f,2.0f };
+	Vector4 triangle3 = { 0.6f,0.8f,0.0f,2.0f };
 	
-	Vector4 triangle4 = { -1.2f,-1.4f,0.0f,2.0f};
-	Vector4 triangle5 = { -0.6f,0.2f,0.0f,2.0f };
-	Vector4 triangle6 = { 0.0f,-1.4f,0.0f,2.0f };
+	Vector4 triangle4 = { -1.2f,-0.2f,0.0f,2.0f};
+	Vector4 triangle5 = { -0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangle6 = { 0.0f,-0.2f,0.0f,2.0f };
 
-	Vector4 triangle7 = { 0.0f,-1.4f,0.0f,2.0f };
-	Vector4 triangle8 = { 0.6f,0.2f,0.0f,2.0f };
-	Vector4 triangle9 = { 1.2f,-1.4f,0.0f,2.0f };
+	Vector4 triangle7 = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 triangle8 = { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangle9 = { 1.2f,-0.2f,0.0f,2.0f };
 
 
 
