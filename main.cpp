@@ -9,7 +9,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//初期化
 	WinApp* win_ = nullptr;
-	//CreateTriangle* Triangle = new CreateTriangle;
+	CreateTriangle* Triangle = new CreateTriangle;
 	Engine* engin = new Engine;
 	const int kMeshCount = 10;
 	//Mesh mesh[1];
@@ -22,36 +22,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	engin->Initialize();
 
-	Vector4 triangle1 = {-0.6f,0.8f,0.0f,2.0f};
-	Vector4 triangle2 = { 0.0f,1.8f,0.0f,2.0f };
-	Vector4 triangle3 = { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangleDeta1 = {-0.6f,0.8f,0.0f,2.0f};
+	Vector4 triangleDeta2 = { 0.0f,1.8f,0.0f,2.0f };
+	Vector4 triangleDeta3 = { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 materialDeta1 = { 1.0f,0.0f,0.0f,1.0f };
 	
-	Vector4 triangle4 = { -1.2f,-0.2f,0.0f,2.0f};
-	Vector4 triangle5 = { -0.6f,0.8f,0.0f,2.0f };
-	Vector4 triangle6 = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 triangleDeta4 = { -1.2f,-0.2f,0.0f,2.0f};
+	Vector4 triangleDeta5 = { -0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangleDeta6 = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 materialDeta2 = { 1.0f,1.0f,0.0f,1.0f };
 
-	Vector4 triangle7 = { 0.0f,-0.2f,0.0f,2.0f };
-	Vector4 triangle8 = { 0.6f,0.8f,0.0f,2.0f };
-	Vector4 triangle9 = { 1.2f,-0.2f,0.0f,2.0f };
-
-
-
-	/*Vector4 triangleData[10][3] = {
-		{
-			{},
-			{},
-			{}
-		},
-		{},
-		{},
-	};*/
-
-
+	Vector4 triangleDeta7 = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 triangleDeta8 = { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangleDeta9 = { 1.2f,-0.2f,0.0f,2.0f };
+	Vector4 materialDeta3 = { 1.0f,0.0f,1.0f,1.0f };
 
 	MSG msg{};
-	/*for (int i = 0; i < 10; i++) {
-		mesh[i].init(triangleData[i]);
-	}*/
+	
 
 	while (msg.message != WM_QUIT) {
 
@@ -63,17 +50,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		else {
 			engin->BeginFrame();
-		
-			engin->DrawTriangle(triangle1, triangle2, triangle3);
+			
+			engin->DrawTriangle(triangleDeta1, triangleDeta2, triangleDeta3, materialDeta1);
 
-			engin->DrawTriangle(triangle4, triangle5, triangle6);
+			engin->DrawTriangle(triangleDeta4, triangleDeta5, triangleDeta6, materialDeta2);
 
-			engin->DrawTriangle(triangle7, triangle8, triangle9);
+			engin->DrawTriangle(triangleDeta7, triangleDeta7, triangleDeta9, materialDeta3);
 
-			//for (int i = 0; i < 12; i++) {
-			//	engine->DrawTriangle(mesh[i]);
-			//	//mesh[i]->Draw();
-			//}
+			Triangle->Finalize();
 
 			engin->EndFrame();
 

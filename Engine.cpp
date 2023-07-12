@@ -278,9 +278,9 @@ void Engine::EndFrame()
 }
 
 
-void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c)
+void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c ,const Vector4& material)
 {
 	triangleCount_++;
-		triangle_[triangleCount_]->Draw(a, b, c);
+		triangle_[triangleCount_]->Draw(a, b, c,material);
 	
 }
