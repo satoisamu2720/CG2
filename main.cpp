@@ -21,20 +21,22 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	engin->Initialize();
 
-	Vector4 triangleDeta1 = {-0.6f,0.8f,0.0f,2.0f};
-	Vector4 triangleDeta2 = { 0.0f,1.8f,0.0f,2.0f };
-	Vector4 triangleDeta3 = { 0.6f,0.8f,0.0f,2.0f };
-	Vector4 materialDeta1 = { 1.0f,1.0f,0.0f,1.0f };
+	Vector4 triangle1Data= {-0.6f,0.8f,0.0f,2.0f};
+	Vector4 triangle2Data = { 0.0f,1.8f,0.0f,2.0f };
+	Vector4 triangle3Data= { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 material1Data = { 1.0f,0.0f,0.0f,1.0f };
 	
-	Vector4 triangleDeta4 = { -1.2f,-0.2f,0.0f,2.0f};
-	Vector4 triangleDeta5 = { -0.6f,0.8f,0.0f,2.0f };
-	Vector4 triangleDeta6 = { 0.0f,-0.2f,0.0f,2.0f };
-	Vector4 materialDeta2 = { 1.0f,1.0f,0.0f,1.0f };
+	Vector4 triangle4Data = { -1.2f,-0.2f,0.0f,2.0f};
+	Vector4 triangle5Data = { -0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangle6Data = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 material2Data = { 1.0f,0.0f,1.0f,1.0f };
 
-	Vector4 triangleDeta7 = { 0.0f,-0.2f,0.0f,2.0f };
-	Vector4 triangleDeta8 = { 0.6f,0.8f,0.0f,2.0f };
-	Vector4 triangleDeta9 = { 1.2f,-0.2f,0.0f,2.0f };
-	Vector4 materialDeta3 = { 1.0f,1.0f,0.0f,1.0f };
+	Vector4 triangle7Data = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 triangle8Data = { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangle9Data = { 1.2f,-0.2f,0.0f,2.0f };
+	Vector4 material3Data = { 1.0f,1.0f,0.0f,1.0f };
+
+
 
 	MSG msg{};
 	
@@ -49,12 +51,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		else {
 			engin->BeginFrame();
-			
-			engin->DrawTriangle(triangleDeta1, triangleDeta2, triangleDeta3, materialDeta1);
+		
+			engin->DrawTriangle(triangle1Data, triangle2Data, triangle3Data,material1Data);
 
-			engin->DrawTriangle(triangleDeta4, triangleDeta5, triangleDeta6, materialDeta2);
+			engin->DrawTriangle(triangle4Data, triangle5Data, triangle6Data, material2Data);
 
-			engin->DrawTriangle(triangleDeta7, triangleDeta7, triangleDeta9, materialDeta3);
+			engin->DrawTriangle(triangle7Data, triangle8Data, triangle9Data, material3Data);
 
 
 			engin->EndFrame();

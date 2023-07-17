@@ -39,7 +39,7 @@ public:
 private:
 	static WinApp* win_;
 	static	DirectXCommon* dxCommon_;
-	CreateTriangle* triangle_[16];
+	CreateTriangle* triangle_[12];
 	int triangleCount_;
 	IDxcUtils* dxcUtils_;
 	IDxcCompiler3* dxcCompiler_;

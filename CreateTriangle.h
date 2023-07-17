@@ -7,11 +7,11 @@ class CreateEngine;
 class CreateTriangle {
 public:
 	void Initialize(DirectXCommon* dxCommon);
-	void Draw(const Vector4& a, const Vector4& b, const Vector4& c , const Vector4& material);
+	void Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
 	void Finalize();
 private:
 	void SettingVertex();
-	void SettingColor();
+	void SetResource();
 	
 
 	CreateEngine* Engine_;
