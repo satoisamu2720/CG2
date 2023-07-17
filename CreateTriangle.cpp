@@ -5,7 +5,7 @@
 void CreateTriangle::Initialize(DirectXCommon * dxCommon) {
 	dxCommon_ = dxCommon;
 	SettingVertex();
-	
+	SetResource();
 }
 
 void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& matrial) {
@@ -32,6 +32,7 @@ void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, 
 void CreateTriangle::Finalize() {
 
 	vertexResource_->Release();
+	materialResource_->Release();
 }
 
 void CreateTriangle::SettingVertex() {
@@ -46,7 +47,10 @@ void CreateTriangle::SettingVertex() {
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
 }
-
+void CreateTriangle::SetResource() {
+	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 3);
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+}
 
 
 ID3D12Resource* CreateTriangle::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {

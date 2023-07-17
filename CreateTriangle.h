@@ -11,6 +11,7 @@ public:
 	void Finalize();
 private:
 	void SettingVertex();
+	void SetResource();
 	
 
 	CreateEngine* Engine_;
