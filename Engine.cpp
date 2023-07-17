@@ -235,7 +235,7 @@ void Engine::ScissorRect()
 }
 void Engine::Initialize()
 {
-	for (int i = 0; i < 12; i++) {
+	for (int i = 0; i < 16; i++) {
 		triangle_[i] = new CreateTriangle();
 		triangle_[i]->Initialize(dxCommon_);
 	}
@@ -243,7 +243,7 @@ void Engine::Initialize()
 }
 void Engine::Finalize()
 {
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 16; i++)
 	{
 		triangle_[i]->Finalize();
 	}

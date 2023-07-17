@@ -9,7 +9,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//初期化
 	WinApp* win_ = nullptr;
-	CreateTriangle* Triangle = new CreateTriangle;
 	Engine* engin = new Engine;
 	const int kMeshCount = 10;
 	//Mesh mesh[1];
@@ -25,7 +24,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector4 triangleDeta1 = {-0.6f,0.8f,0.0f,2.0f};
 	Vector4 triangleDeta2 = { 0.0f,1.8f,0.0f,2.0f };
 	Vector4 triangleDeta3 = { 0.6f,0.8f,0.0f,2.0f };
-	Vector4 materialDeta1 = { 1.0f,0.0f,0.0f,1.0f };
+	Vector4 materialDeta1 = { 1.0f,1.0f,0.0f,1.0f };
 	
 	Vector4 triangleDeta4 = { -1.2f,-0.2f,0.0f,2.0f};
 	Vector4 triangleDeta5 = { -0.6f,0.8f,0.0f,2.0f };
@@ -35,7 +34,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector4 triangleDeta7 = { 0.0f,-0.2f,0.0f,2.0f };
 	Vector4 triangleDeta8 = { 0.6f,0.8f,0.0f,2.0f };
 	Vector4 triangleDeta9 = { 1.2f,-0.2f,0.0f,2.0f };
-	Vector4 materialDeta3 = { 1.0f,0.0f,1.0f,1.0f };
+	Vector4 materialDeta3 = { 1.0f,1.0f,0.0f,1.0f };
 
 	MSG msg{};
 	
@@ -57,7 +56,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 			engin->DrawTriangle(triangleDeta7, triangleDeta7, triangleDeta9, materialDeta3);
 
-			Triangle->Finalize();
 
 			engin->EndFrame();
 
