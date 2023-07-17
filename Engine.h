@@ -34,7 +34,7 @@ public:
 	void Finalize();
 	void BeginFrame();
 	void EndFrame();
-	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c);
+	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& matrial);
 
 private:
 	static WinApp* win_;

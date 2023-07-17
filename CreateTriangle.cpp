@@ -8,7 +8,7 @@ void CreateTriangle::Initialize(DirectXCommon * dxCommon) {
 	
 }
 
-void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c) {
+void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& matrial) {
 	//左下
 	vertexData_[0] = a;
 	//上
@@ -16,10 +16,14 @@ void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c) 
 	//右下
 	vertexData_[2] = c;
 
+	*materialData_ = matrial;
+
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	///マテリアルCBufferの場所を指定
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//描画
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
 

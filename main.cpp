@@ -22,17 +22,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	engin->Initialize();
 
-	Vector4 triangle1 = {-0.6f,0.8f,0.0f,2.0f};
-	Vector4 triangle2 = { 0.0f,1.8f,0.0f,2.0f };
-	Vector4 triangle3 = { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 triangle1Data= {-0.6f,0.8f,0.0f,2.0f};
+	Vector4 triangle2Data = { 0.0f,1.8f,0.0f,2.0f };
+	Vector4 triangle3Data= { 0.6f,0.8f,0.0f,2.0f };
+	Vector4 matrial1Data = { 1.0f,1.0f,1.0f,1.0f };
 	
 	Vector4 triangle4 = { -1.2f,-0.2f,0.0f,2.0f};
 	Vector4 triangle5 = { -0.6f,0.8f,0.0f,2.0f };
 	Vector4 triangle6 = { 0.0f,-0.2f,0.0f,2.0f };
+	Vector4 matrial2Data = { 1.0f,1.0f,1.0f,1.0f };
 
 	Vector4 triangle7 = { 0.0f,-0.2f,0.0f,2.0f };
 	Vector4 triangle8 = { 0.6f,0.8f,0.0f,2.0f };
 	Vector4 triangle9 = { 1.2f,-0.2f,0.0f,2.0f };
+	Vector4 matrial3Data = { 1.0f,1.0f,1.0f,1.0f };
 
 
 
@@ -64,11 +67,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		else {
 			engin->BeginFrame();
 		
-			engin->DrawTriangle(triangle1, triangle2, triangle3);
+			engin->DrawTriangle(triangle1Data, triangle2Data, triangle3Data,matrial1Data);
 
-			engin->DrawTriangle(triangle4, triangle5, triangle6);
+			engin->DrawTriangle(triangle4, triangle5, triangle6, matrial1Data);
 
-			engin->DrawTriangle(triangle7, triangle8, triangle9);
+			engin->DrawTriangle(triangle7, triangle8, triangle9, matrial1Data);
 
 			//for (int i = 0; i < 12; i++) {
 			//	engine->DrawTriangle(mesh[i]);
