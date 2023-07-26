@@ -7,7 +7,7 @@ class CreateEngine;
 class CreateTriangle {
 public:
 	void Initialize(DirectXCommon* dxCommon);
-	void Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
+	void Draw(const Vector4& a , const Vector4& b, const Vector4& c, const Vector4& material);
 	void Finalize();
 private:
 	void SettingVertex();
@@ -22,4 +22,5 @@ private:
 	ID3D12Resource* materialResource_;
 	ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+	int i;
 };

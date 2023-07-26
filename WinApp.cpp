@@ -85,7 +85,6 @@ void WinApp::Finalize()
 	debugController_->Release();
 }
 
-
 HWND WinApp::hwnd_;
 UINT WinApp::windowStyle_;
 ID3D12Debug1* WinApp::debugController_;

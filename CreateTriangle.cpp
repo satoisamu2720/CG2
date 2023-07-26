@@ -1,6 +1,6 @@
 #include "CreateTriangle.h"
 #include <assert.h>
-#include "Engine.h"
+#include "SiEngine.h"
 
 void CreateTriangle::Initialize(DirectXCommon * dxCommon) {
 	dxCommon_ = dxCommon;
@@ -9,14 +9,16 @@ void CreateTriangle::Initialize(DirectXCommon * dxCommon) {
 }
 
 void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material) {
-	//左下
-	vertexData_[0] = a;
-	//上
-	vertexData_[1] = b;
-	//右下
-	vertexData_[2] = c;
+	for (int j = 0; j < 4; j++) {
+		//左下
+		vertexData_[0] = a;
+		//上
+		vertexData_[1] = b;
+		//右下
+		vertexData_[2] = c;
 
-	*materialData_ = material;
+		*materialData_ = material;
+	}
 
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);

@@ -13,7 +13,7 @@
   <ItemGroup>
     <ClCompile Include="CreateTriangle.cpp" />
     <ClCompile Include="DirectXCommon.cpp" />
-    <ClCompile Include="Engine.cpp" />
+    <ClCompile Include="SiEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyFunction.cpp" />
     <ClCompile Include="WinApp.cpp" />
@@ -35,7 +35,7 @@
   <ItemGroup>
     <ClInclude Include="CreateTriangle.h" />
     <ClInclude Include="DirectXCommon.h" />
-    <ClInclude Include="Engine.h" />
+    <ClInclude Include="SiEngine.h" />
     <ClInclude Include="MyFunction.h" />
     <ClInclude Include="Vector4.h" />
     <ClInclude Include="WinApp.h" />

@@ -5,7 +5,7 @@
 #include "CreateTriangle.h"
 #pragma comment(lib,"dxcompiler.lib")
 
-class Engine
+class SiEngine
 {
 public:
 	//頂点リソースにデータを書き込む

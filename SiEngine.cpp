@@ -1,12 +1,11 @@
-#include "Engine.h"
+#include "SiEngine.h"
 #include <assert.h>
 
-
 WinApp* winApp_ = new WinApp;
-WinApp* Engine::win_;
-DirectXCommon* Engine::dxCommon_;
+WinApp* SiEngine::win_;
+DirectXCommon* SiEngine::dxCommon_;
 
-void Engine::Initialization(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
+void SiEngine::Initialization(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
 {
 	dxCommon_->Initialization(win, title, win->GetkClientWidth(), win->GetkClientHeight());
 	InitializeDxcCompiler();
@@ -19,8 +18,7 @@ void Engine::Initialization(WinApp* win, const wchar_t* title, int32_t width, in
 	ScissorRect();
 }
 
-
-IDxcBlob* Engine::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
+IDxcBlob* SiEngine::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
 {
 	//これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
@@ -85,7 +83,7 @@ IDxcBlob* Engine::CompileShader(const std::wstring& filePath, const wchar_t* pro
 	return shaderBlob;
 }
 
-void Engine::InitializeDxcCompiler()
+void SiEngine::InitializeDxcCompiler()
 {
 	HRESULT hr;
 	dxcUtils_ = nullptr;
@@ -102,7 +100,7 @@ void Engine::InitializeDxcCompiler()
 	assert(SUCCEEDED(hr));
 }
 
-void Engine::CreateRootSignature()
+void SiEngine::CreateRootSignature()
 {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -137,7 +135,7 @@ void Engine::CreateRootSignature()
 	assert(SUCCEEDED(hr));
 }
 
-void Engine::CreateInputlayOut()
+void SiEngine::CreateInputlayOut()
 {
 	inputElementDescs_[0].SemanticName = "POSITION";
 	inputElementDescs_[0].SemanticIndex = 0;
@@ -148,13 +146,13 @@ void Engine::CreateInputlayOut()
 	inputLayoutDesc_.NumElements = _countof(inputElementDescs_);
 }
 
-void Engine::BlendState()
+void SiEngine::BlendState()
 {
 	//すべての色要素を書き込む
 	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
-void Engine::RasterizerState()
+void SiEngine::RasterizerState()
 {
 	//裏面（時計回り）を表示しない
 	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
@@ -172,7 +170,7 @@ void Engine::RasterizerState()
 	assert(pixelShaderBlob_ != nullptr);
 }
 
-void Engine::InitializePSO()
+void SiEngine::InitializePSO()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 
@@ -214,7 +212,7 @@ void Engine::InitializePSO()
 	assert(SUCCEEDED(hr));
 }
 
-void Engine::ViewPort()
+void SiEngine::ViewPort()
 {
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = winApp_->GetkClientWidth();
@@ -225,7 +223,7 @@ void Engine::ViewPort()
 	viewport_.MaxDepth = 1.0f;
 }
 
-void Engine::ScissorRect()
+void SiEngine::ScissorRect()
 {
 	//シザー短形
 	scissorRect_.left = 0;
@@ -233,15 +231,14 @@ void Engine::ScissorRect()
 	scissorRect_.top = 0;
 	scissorRect_.bottom = winApp_->GetkClientWidth();
 }
-void Engine::Initialize()
+void SiEngine::Initialize()
 {
 	for (int i = 0; i < 12; i++) {
 		triangle_[i] = new CreateTriangle();
 		triangle_[i]->Initialize(dxCommon_);
 	}
-	
 }
-void Engine::Finalize()
+void SiEngine::Finalize()
 {
 	for (int i = 0; i < 12; i++)
 	{
@@ -258,7 +255,7 @@ void Engine::Finalize()
 	vertexShaderBlob_->Release();
 	dxCommon_->Finalize();
 }
-void Engine::BeginFrame()
+void SiEngine::BeginFrame()
 {
 	triangleCount_ = 0;
 	dxCommon_->PreDraw();
@@ -272,13 +269,12 @@ void Engine::BeginFrame()
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_);
 }
 
-void Engine::EndFrame()
+void SiEngine::EndFrame()
 {
 	dxCommon_->PostDraw();
 }
 
-
-void Engine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& material)
+void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& material)
 {
 	triangleCount_++;
 		triangle_[triangleCount_]->Draw(a, b, c, material);

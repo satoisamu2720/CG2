@@ -1,4 +1,4 @@
-#include "Engine.h"
+#include "SiEngine.h"
 #include "CreateTriangle.h"
 
 const wchar_t kWindowTitle[] = { L"CG2" };
@@ -8,18 +8,13 @@ const wchar_t kWindowTitle[] = { L"CG2" };
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	//初期化
+
 	WinApp* win_ = nullptr;
-	Engine* engin = new Engine;
-	const int kMeshCount = 10;
-	//Mesh mesh[1];
-	
+	SiEngine* engin_ = new SiEngine;
 
-	//Engine* engin = new Engine;
-	//DX12Common* dx12Common = new DX12Common();
+	engin_->Initialization(win_, kWindowTitle, 1280, 720);
 
-	engin->Initialization(win_, kWindowTitle, 1280, 720);
-
-	engin->Initialize();
+	engin_->Initialize();
 
 	Vector4 triangle1Data= {-0.6f,0.8f,0.0f,2.0f};
 	Vector4 triangle2Data = { 0.0f,1.8f,0.0f,2.0f };
@@ -36,8 +31,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	Vector4 triangle9Data = { 1.2f,-0.2f,0.0f,2.0f };
 	Vector4 material3Data = { 1.0f,1.0f,0.0f,1.0f };
 
-
-
 	MSG msg{};
 	
 
@@ -50,20 +43,18 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 		else {
-			engin->BeginFrame();
-		
-			engin->DrawTriangle(triangle1Data, triangle2Data, triangle3Data,material1Data);
+			engin_->BeginFrame();
+		//一つ目
+			engin_->DrawTriangle(triangle1Data, triangle2Data, triangle3Data,material1Data);
+		//二つ目
+			engin_->DrawTriangle(triangle4Data, triangle5Data, triangle6Data, material2Data);
+		//三つ目
+			engin_->DrawTriangle(triangle7Data, triangle8Data, triangle9Data, material3Data);
 
-			engin->DrawTriangle(triangle4Data, triangle5Data, triangle6Data, material2Data);
-
-			engin->DrawTriangle(triangle7Data, triangle8Data, triangle9Data, material3Data);
-
-
-			engin->EndFrame();
-
+			engin_->EndFrame();
 		}
 	}
 	OutputDebugStringA("Hello,DirectX!\n");
-	engin->Finalize();
+	engin_->Finalize();
 	return 0;
 }
