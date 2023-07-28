@@ -29,8 +29,7 @@ public:
 	void InitializePSO();
 	void ViewPort();
 	void ScissorRect();
-	void Initialize();
-	void Initialization(WinApp* win, const wchar_t* title, int32_t width, int32_t height);
+	void Initialize(WinApp* win, const wchar_t* title, int32_t width, int32_t height);
 	void Finalize();
 	void BeginFrame();
 	void EndFrame();

@@ -5,7 +5,7 @@ WinApp* winApp_ = new WinApp;
 WinApp* SiEngine::win_;
 DirectXCommon* SiEngine::dxCommon_;
 
-void SiEngine::Initialization(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
+void SiEngine::Initialize(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
 {
 	dxCommon_->Initialization(win, title, win->GetkClientWidth(), win->GetkClientHeight());
 	InitializeDxcCompiler();
@@ -231,10 +231,7 @@ void SiEngine::ScissorRect()
 	scissorRect_.top = 0;
 	scissorRect_.bottom = winApp_->GetkClientWidth();
 }
-void SiEngine::Initialize()
-{
-	
-}
+
 void SiEngine::Draw() {
 	for (int i = 0; i < 3; i++) {
 		triangle_[i]->Draw();
