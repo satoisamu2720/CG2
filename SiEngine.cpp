@@ -247,21 +247,18 @@ void SiEngine::Variable() {
 	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
 	triangleData[0].v2 = { 0.0f,1.8f,0.0f,2.0f};
 	triangleData[0].v3 = { 0.6f,0.8f,0.0f,2.0f };
-	triangleData[0].material = { 1.0f,0.0f,0.0f,1.0f };
 
 	triangleData[1].v1 = { -1.2f,-0.2f,0.0f,2.0f };
 	triangleData[1].v2 = { -0.6f,0.8f,0.0f,2.0f };
 	triangleData[1].v3 = { 0.0f,-0.2f,0.0f,2.0f };
-	triangleData[1].material = { 1.0f,0.0f,1.0f,1.0f };
 
 	triangleData[2].v1  = { 0.0f,-0.2f,0.0f,2.0f };
 	triangleData[2].v2  = { 0.6f,0.8f,0.0f,2.0f };
 	triangleData[2].v3  = { 1.2f,-0.2f,0.0f,2.0f };
-	triangleData[2].material = { 1.0f,1.0f,0.0f,1.0f };
 
 	for (int i = 0; i < 3; i++) {
 		triangle_[i] = new CreateTriangle();
-		triangle_[i]->Initialize(dxCommon_,triangleData[i].v1, triangleData[i].v2, triangleData[i].v3, triangleData[i].material );
+		triangle_[i]->Initialize(dxCommon_,triangleData[i].v1, triangleData[i].v2, triangleData[i].v3 );
 	}
 }
 void SiEngine::Finalize()
