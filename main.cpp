@@ -16,10 +16,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	engin_->Initialize();
 
-	Vector4 triangle1Data= {-0.6f,0.8f,0.0f,2.0f};
-	Vector4 triangle2Data = { 0.0f,1.8f,0.0f,2.0f };
-	Vector4 triangle3Data= { 0.6f,0.8f,0.0f,2.0f };
-	Vector4 material1Data = { 1.0f,0.0f,0.0f,1.0f };
+	engin_->Variable();
+
+	
 	
 	Vector4 triangle4Data = { -1.2f,-0.2f,0.0f,2.0f};
 	Vector4 triangle5Data = { -0.6f,0.8f,0.0f,2.0f };
@@ -44,13 +43,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		}
 		else {
 			engin_->BeginFrame();
-		//一つ目
-			engin_->DrawTriangle(triangle1Data, triangle2Data, triangle3Data,material1Data);
-		//二つ目
-			engin_->DrawTriangle(triangle4Data, triangle5Data, triangle6Data, material2Data);
-		//三つ目
-			engin_->DrawTriangle(triangle7Data, triangle8Data, triangle9Data, material3Data);
-
+			engin_->Draw();
 			engin_->EndFrame();
 		}
 	}

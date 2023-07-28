@@ -1,17 +1,22 @@
 #pragma once
 #include"DirectXCommon.h"
 #include"Vector4.h"
-
+typedef struct Triangle {
+	Vector4 v1;
+	Vector4 v2;
+	Vector4 v3;
+	Vector4 material;
+};
 class CreateEngine;
 
 class CreateTriangle {
 public:
-	void Initialize(DirectXCommon* dxCommon);
-	void Draw(const Vector4& a , const Vector4& b, const Vector4& c, const Vector4& material);
+	void Initialize(DirectXCommon* dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
+	void Draw();
 	void Finalize();
 private:
-	void SettingVertex();
-	void SetResource();
+	void SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c);
+	void SetResource(const Vector4& material);
 	
 
 	CreateEngine* Engine_;

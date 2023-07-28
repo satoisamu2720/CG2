@@ -2,24 +2,14 @@
 #include <assert.h>
 #include "SiEngine.h"
 
-void CreateTriangle::Initialize(DirectXCommon * dxCommon) {
+void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material) {
 	dxCommon_ = dxCommon;
-	SettingVertex();
-	SetResource();
+	SettingVertex(a,b,c);
+	SetResource(material);
 }
 
-void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material) {
-	for (int j = 0; j < 4; j++) {
-		//左下
-		vertexData_[0] = a;
-		//上
-		vertexData_[1] = b;
-		//右下
-		vertexData_[2] = c;
-
-		*materialData_ = material;
-	}
-
+void CreateTriangle::Draw() {
+	
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
@@ -28,7 +18,6 @@ void CreateTriangle::Draw(const Vector4& a, const Vector4& b, const Vector4& c, 
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//描画
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
-
 }
 
 void CreateTriangle::Finalize() {
@@ -37,7 +26,7 @@ void CreateTriangle::Finalize() {
 	materialResource_->Release();
 }
 
-void CreateTriangle::SettingVertex() {
+void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c) {
 	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 3);
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -48,10 +37,17 @@ void CreateTriangle::SettingVertex() {
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 
+	//左下
+	vertexData_[0] = a;
+	//上
+	vertexData_[1] = b;
+	//右下
+	vertexData_[2] = c;
 }
-void CreateTriangle::SetResource() {
+void CreateTriangle::SetResource(const Vector4& material) {
 	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 3);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+	*materialData_ = material;
 }
 
 

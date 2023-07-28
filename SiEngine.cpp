@@ -233,14 +233,40 @@ void SiEngine::ScissorRect()
 }
 void SiEngine::Initialize()
 {
-	for (int i = 0; i < 12; i++) {
+	
+}
+void SiEngine::Draw() {
+	for (int i = 0; i < 3; i++) {
+		triangle_[i]->Draw();
+	}
+}
+void SiEngine::Variable() {
+
+	Triangle triangleData[3] = {};
+
+	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
+	triangleData[0].v2 = { 0.0f,1.8f,0.0f,2.0f};
+	triangleData[0].v3 = { 0.6f,0.8f,0.0f,2.0f };
+	triangleData[0].material = { 1.0f,0.0f,0.0f,1.0f };
+
+	triangleData[1].v1 = { -1.2f,-0.2f,0.0f,2.0f };
+	triangleData[1].v2 = { -0.6f,0.8f,0.0f,2.0f };
+	triangleData[1].v3 = { 0.0f,-0.2f,0.0f,2.0f };
+	triangleData[1].material = { 1.0f,0.0f,1.0f,1.0f };
+
+	triangleData[2].v1  = { 0.0f,-0.2f,0.0f,2.0f };
+	triangleData[2].v2  = { 0.6f,0.8f,0.0f,2.0f };
+	triangleData[2].v3  = { 1.2f,-0.2f,0.0f,2.0f };
+	triangleData[2].material = { 1.0f,1.0f,0.0f,1.0f };
+
+	for (int i = 0; i < 3; i++) {
 		triangle_[i] = new CreateTriangle();
-		triangle_[i]->Initialize(dxCommon_);
+		triangle_[i]->Initialize(dxCommon_,triangleData[i].v1, triangleData[i].v2, triangleData[i].v3, triangleData[i].material );
 	}
 }
 void SiEngine::Finalize()
 {
-	for (int i = 0; i < 12; i++)
+	for (int i = 0; i < 3; i++)
 	{
 		triangle_[i]->Finalize();
 	}
@@ -277,6 +303,6 @@ void SiEngine::EndFrame()
 void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& material)
 {
 	triangleCount_++;
-		triangle_[triangleCount_]->Draw(a, b, c, material);
+		triangle_[triangleCount_]->Draw();
 	
 }
