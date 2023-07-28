@@ -18,17 +18,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	engin_->Variable();
 
-	
-	
-	Vector4 triangle4Data = { -1.2f,-0.2f,0.0f,2.0f};
-	Vector4 triangle5Data = { -0.6f,0.8f,0.0f,2.0f };
-	Vector4 triangle6Data = { 0.0f,-0.2f,0.0f,2.0f };
-	Vector4 material2Data = { 1.0f,0.0f,1.0f,1.0f };
-
-	Vector4 triangle7Data = { 0.0f,-0.2f,0.0f,2.0f };
-	Vector4 triangle8Data = { 0.6f,0.8f,0.0f,2.0f };
-	Vector4 triangle9Data = { 1.2f,-0.2f,0.0f,2.0f };
-	Vector4 material3Data = { 1.0f,1.0f,0.0f,1.0f };
 
 	MSG msg{};
 	
