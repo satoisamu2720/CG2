@@ -12,9 +12,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	WinApp* win_ = nullptr;
 	SiEngine* engin_ = new SiEngine;
 
-	engin_->Initialization(win_, kWindowTitle, 1280, 720);
-
-	engin_->Initialize();
+	engin_->Initialize(win_, kWindowTitle, 1280, 720);
 
 	engin_->Variable();
 
