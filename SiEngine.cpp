@@ -8,6 +8,7 @@ DirectXCommon* SiEngine::dxCommon_;
 void SiEngine::Initialize(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
 {
 	dxCommon_->Initialization(win, title, win->GetkClientWidth(), win->GetkClientHeight());
+	dxCommon_->ImGuiInitialize();
 	InitializeDxcCompiler();
 	CreateRootSignature();
 	CreateInputlayOut();
@@ -16,7 +17,7 @@ void SiEngine::Initialize(WinApp* win, const wchar_t* title, int32_t width, int3
 	InitializePSO();
 	ViewPort();
 	ScissorRect();
-	dxCommon_->ImGuiInitialize();
+	
 }
 
 IDxcBlob* SiEngine::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
