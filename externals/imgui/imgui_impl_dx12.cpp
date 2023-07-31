@@ -166,7 +166,7 @@ void ImGui_ImplDX12_RenderDrawData(ImDrawData* draw_data, ID3D12GraphicsCommandL
     // FIXME: I'm assuming that this only gets called once per frame!
     // If not, we can't just re-allocate the IB or VB, we'll have to do a proper allocator.
     ImGui_ImplDX12_Data* bd = ImGui_ImplDX12_GetBackendData();
-    bd->frameIndex = bd->frameIndex + 1;
+    bd->frameIndex = bd->frameIndex + 1;  
     ImGui_ImplDX12_RenderBuffers* fr = &bd->pFrameResources[bd->frameIndex % bd->numFramesInFlight];
 
     // Create and grow vertex/index buffers if needed
