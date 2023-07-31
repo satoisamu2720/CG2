@@ -30,6 +30,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		else {
 			engin_->BeginFrame();
 			engin_->Draw();
+			engin_->Update();
 			engin_->EndFrame();
 		}
 	}

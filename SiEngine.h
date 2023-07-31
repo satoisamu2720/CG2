@@ -34,6 +34,7 @@ public:
 	void BeginFrame();
 	void EndFrame();
 	void Variable();
+	void Update();
 	void Draw();
 	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
 
@@ -58,4 +59,9 @@ private:
 	D3D12_VIEWPORT viewport_{};
 	D3D12_RECT scissorRect_{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
+	Vector4 triangleData1;
+	Vector4 triangleData2;
+	Vector4 triangleData3;
+	Vector4 material;
+
 };
