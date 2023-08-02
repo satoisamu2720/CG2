@@ -246,7 +246,7 @@ void SiEngine::Variable() {
 	triangleData1 = {-0.6f,0.8f,0.0f,2.0f};
 	triangleData2 = { 0.0f,1.8f,0.0f,2.0f};
 	triangleData3 = { 0.6f,0.8f,0.0f,2.0f };
-	material = { 1.0f,0.0f,0.0f,1.0f };
+	material = { 1.0f,1.0f,0.0f,1.0f };
 
 	/*triangleData[1].v1 = { -1.2f,-0.2f,0.0f,2.0f };
 	triangleData[1].v2 = { -0.6f,0.8f,0.0f,2.0f };
@@ -297,6 +297,7 @@ void SiEngine::BeginFrame()
 	ImGui::ShowDemoWindow();
 }
 void SiEngine::Update() {
+
 	
 	ImGui::Begin("Window");
 	ImGui::DragFloat3("Color", &material.x, 0.1f);
@@ -306,7 +307,9 @@ void SiEngine::Update() {
 
 void SiEngine::EndFrame()
 {
+	
 	ImGui::Render();
+	
 	dxCommon_->PostDraw();
 }
 

@@ -11,7 +11,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	WinApp* win_ = nullptr;
 	SiEngine* engin_ = new SiEngine;
-
+	DirectXCommon* dxCommon_ = new DirectXCommon;
 	engin_->Initialize(win_, kWindowTitle, 1280, 720);
 
 	engin_->Variable();
