@@ -236,7 +236,7 @@ void SiEngine::ScissorRect()
 
 void SiEngine::Draw() {
 	for (int i = 0; i < 3; i++) {
-		triangle_[i]->Draw();
+		triangle_[i]->Draw(material);
 	}
 }
 void SiEngine::Variable() {
@@ -246,7 +246,7 @@ void SiEngine::Variable() {
 	triangleData1 = {-0.6f,0.8f,0.0f,2.0f};
 	triangleData2 = { 0.0f,1.8f,0.0f,2.0f};
 	triangleData3 = { 0.6f,0.8f,0.0f,2.0f };
-	material = { 1.0f,1.0f,0.0f,1.0f };
+	material = { 1.0f,0.0f,0.0f,1.0f };
 
 	/*triangleData[1].v1 = { -1.2f,-0.2f,0.0f,2.0f };
 	triangleData[1].v2 = { -0.6f,0.8f,0.0f,2.0f };
@@ -295,14 +295,12 @@ void SiEngine::BeginFrame()
 	dxCommon_->GetCommandList()->SetPipelineState(graphicsPipelineState_);
 
 	ImGui::ShowDemoWindow();
+	
 }
 void SiEngine::Update() {
-
-	
 	ImGui::Begin("Window");
-	ImGui::DragFloat3("Color", &material.x, 0.1f);
+	ImGui::DragFloat3("Color", &material.x, 0.01f);
 	ImGui::End();
-	
 }
 
 void SiEngine::EndFrame()
@@ -313,9 +311,9 @@ void SiEngine::EndFrame()
 	dxCommon_->PostDraw();
 }
 
-void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& material)
-{
-	triangleCount_++;
-		triangle_[triangleCount_]->Draw();
-	
-}
+//void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& material)
+//{
+//	triangleCount_++;
+//		triangle_[triangleCount_]->Draw();
+//	
+//}

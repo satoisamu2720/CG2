@@ -5,11 +5,11 @@
 void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material) {
 	dxCommon_ = dxCommon;
 	SettingVertex(a,b,c);
-	SetResource(material);
+	SetResource();
 }
 
-void CreateTriangle::Draw() {
-	
+void CreateTriangle::Draw(const Vector4& material) {
+	*materialData_ = material;
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
@@ -44,10 +44,10 @@ void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vec
 	//右下
 	vertexData_[2] = c;
 }
-void CreateTriangle::SetResource(const Vector4& material) {
+void CreateTriangle::SetResource() {
 	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 3);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-	*materialData_ = material;
+	
 }
 
 
