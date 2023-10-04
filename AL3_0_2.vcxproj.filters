@@ -14,7 +14,7 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="imgui">
-      <UniqueIdentifier>{44af4341-4bf5-4915-bde5-293c07a08d86}</UniqueIdentifier>
+      <UniqueIdentifier>{46a66c04-3d6b-45b6-b545-ece018af291f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

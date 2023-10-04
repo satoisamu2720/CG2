@@ -36,7 +36,7 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t kClientWidth_, int32
 
 	//クライアント領域を元に実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-
+	
 	//ウィンドウの生成
 	hwnd_ = CreateWindow(
 		wc_.lpszClassName,//クラス名

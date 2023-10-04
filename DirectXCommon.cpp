@@ -248,6 +248,7 @@ void DirectXCommon::CreateFinalRenderTargets()
 	rtvHandles_[1].ptr = rtvHandles_[0].ptr + device_->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	//2つ目を作る
 	device_->CreateRenderTargetView(swapChainResources_[1], &rtvDesc_, rtvHandles_[1]);
+
 }
 
 void DirectXCommon::CreateFence()
@@ -268,6 +269,8 @@ void DirectXCommon::PreDraw()
 	ImGui_ImplDX12_NewFrame();
 	ImGui_ImplWin32_NewFrame();
 	ImGui::NewFrame();
+
+	
 
 	//書き込むバックバッファのインデックスを取得
 	UINT backBufferIndex = swapChain_->GetCurrentBackBufferIndex();
@@ -296,7 +299,8 @@ void DirectXCommon::PreDraw()
 void DirectXCommon::PostDraw()
 {
 	hr_;
-	ImGui_ImplDX12_RenderDrawData(ImGui::GetDrawData(), commandList_);
+	
+	
 	//画面描画処理の終わり、状態を遷移
 	barrier_.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	
@@ -353,7 +357,7 @@ void DirectXCommon::ClearRenderTarget()
 	//指定した色で画面全体をクリアする
 	float clearcolor[] = { 0.1f,0.25f,0.5f,1.0f };//青っぽい色
 	commandList_->ClearRenderTargetView(rtvHandles_[backBufferIndex], clearcolor, 0, nullptr);
-
+	
 }
 
 void DirectXCommon::Finalize()
