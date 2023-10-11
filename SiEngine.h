@@ -59,9 +59,8 @@ private:
 	D3D12_VIEWPORT viewport_{};
 	D3D12_RECT scissorRect_{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
-	Vector4 triangleData1;
-	Vector4 triangleData2;
-	Vector4 triangleData3;
+	Triangle triangleData[10] = {};
+
 	Vector4 material;
 
 };

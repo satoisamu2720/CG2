@@ -242,45 +242,58 @@ void SiEngine::ScissorRect()
 }
 
 void SiEngine::Draw() {
-	for (int i = 0; i < 3; i++) {
-		triangle_[i]->Draw(material);
+	for (int i = 0; i < 10; i++) {
+		triangle_[i]->Draw(triangleData[i].material);
 	}
+	
 }
 void SiEngine::Variable() {
-
-	
-
-	Triangle triangleData[3] = {};
 
 	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
 	triangleData[0].v2 = { 0.0f,1.8f,0.0f,2.0f };
 	triangleData[0].v3 = { 0.6f,0.8f,0.0f,2.0f };
 	triangleData[0].material = { 1.0f,0.0f,0.0f,1.0f };
 
-	triangleData[1].v1 = { -1.2f,-0.2f,0.0f,2.0f };
-	triangleData[1].v2 = { -0.6f,0.8f,0.0f,2.0f };
-	triangleData[1].v3 = { 0.0f,-0.2f,0.0f,2.0f };
-	triangleData[1].material = { 1.0f,0.0f,1.0f,1.0f };
+	triangleData[1].v1 = { -0.5f,0.7f,0.0f,2.0f };
+	triangleData[1].v2 = { 0.1f,1.7f,0.0f,2.0f };
+	triangleData[1].v3 = { 0.7f,0.7f,0.0f,2.0f };
+	triangleData[1].material = { 1.0f,1.0f,0.0f,1.0f };
 
-	triangleData[2].v1 = { 0.0f,-0.2f,0.0f,2.0f };
-	triangleData[2].v2 = { 0.6f,0.8f,0.0f,2.0f };
-	triangleData[2].v3 = { 1.2f,-0.2f,0.0f,2.0f };
-	triangleData[2].material = { 1.0f,1.0f,0.0f,1.0f };
+	triangleData[2].v1 = { -0.4f,0.6f,0.0f,2.0f };
+	triangleData[2].v2 = { 0.2f,1.6f,0.0f,2.0f };
+	triangleData[2].v3 = { 0.8f,0.6f,0.0f,2.0f };
+	triangleData[2].material = { 1.0f,0.0f,1.0f,1.0f };
 
-	for (int i = 0; i < 3; i++) {
+	triangleData[3].v1 = { -0.3f,0.5f,0.0f,2.0f };
+	triangleData[3].v2 = { 0.3f,1.5f,0.0f,2.0f };
+	triangleData[3].v3 = { 0.9f,0.5f,0.0f,2.0f };
+	triangleData[3].material = { 0.0f,1.0f,0.0f,1.0f };
+
+	triangleData[4].v1 = { -0.2f,0.4f,0.0f,2.0f };
+	triangleData[4].v2 = { 0.4f,1.4f,0.0f,2.0f };
+	triangleData[4].v3 = { 1.0f,0.4f,0.0f,2.0f };
+	triangleData[4].material = { 0.0f,0.0f,0.0f,1.0f };
+
+	triangleData[5].v1 = { -0.1f,0.3f,0.0f,2.0f };
+	triangleData[5].v2 = { 0.5f,1.3f,0.0f,2.0f };
+	triangleData[5].v3 = { 1.1f,0.3f,0.0f,2.0f };
+	triangleData[5].material = { 1.0f,1.0f,1.0f,1.0f };
+
+
+	for (int i = 0; i < 10; i++) {
 		triangle_[i] = new CreateTriangle();
 		triangle_[i]->Initialize(dxCommon_, triangleData[i].v1, triangleData[i].v2, triangleData[i].v3, triangleData[i].material);
 	}
 
-	for (int i = 0; i < 3; i++) {
+	/*for (int i = 0; i < 3; i++) {
 		triangle_[i] = new CreateTriangle();
 		triangle_[i]->Initialize(dxCommon_,triangleData1, triangleData2, triangleData3,material );
-	}
+	}*/
 	
 }
 void SiEngine::Finalize()
 {
-	for (int i = 0; i < 3; i++)
+	for (int i = 0; i < 10; i++)
 	{
 		triangle_[i]->Finalize();
 	}
@@ -313,7 +326,7 @@ void SiEngine::BeginFrame()
 }
 void SiEngine::Update() {
 	ImGui::Begin("Window");
-	ImGui::DragFloat4("Color", &material.x, 0.01f,material.y,0.01f);
+	ImGui::DragFloat4("Color", &triangleData[0].material.x, 0.01f, triangleData[0].material.y,0.01f);
 	ImGui::End();
 }
 
