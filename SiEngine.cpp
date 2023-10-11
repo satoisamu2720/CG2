@@ -152,6 +152,13 @@ void SiEngine::BlendState()
 {
 	//すべての色要素を書き込む
 	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+	blendDesc_.RenderTarget[0].BlendEnable = TRUE;
+	blendDesc_.RenderTarget[0].SrcBlend = D3D12_BLEND_SRC_ALPHA;
+	blendDesc_.RenderTarget[0].BlendOp = D3D12_BLEND_OP_ADD;
+	blendDesc_.RenderTarget[0].DestBlend = D3D12_BLEND_INV_SRC_ALPHA;
+	blendDesc_.RenderTarget[0].SrcBlendAlpha = D3D12_BLEND_ONE;
+	blendDesc_.RenderTarget[0].BlendOpAlpha = D3D12_BLEND_OP_ADD;
+	blendDesc_.RenderTarget[0].DestBlendAlpha = D3D12_BLEND_ZERO;
 }
 
 void SiEngine::RasterizerState()
@@ -299,7 +306,7 @@ void SiEngine::BeginFrame()
 }
 void SiEngine::Update() {
 	ImGui::Begin("Window");
-	ImGui::DragFloat3("Color", &material.x, 0.01f);
+	ImGui::DragFloat4("Color", &material.x, 0.01f,material.y,0.01f);
 	ImGui::End();
 }
 
