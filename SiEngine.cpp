@@ -251,9 +251,9 @@ void SiEngine::Variable() {
 
 	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
 	triangleData[0].v2 = { -0.6f,1.8f,0.0f,2.0f };
-	triangleData[0].v3 = { 0.6f,1.8f,0.0f,2.0f };
-	triangleData[0].v4 = { 0.6f,0.8f,0.0f,2.0f };
-	triangleData[0].material = { 1.0f,0.0f,0.0f,1.0f };
+	triangleData[0].v3 = { 0.6f,0.8f,0.0f,2.0f };
+	triangleData[0].v4 = { 0.6f,1.8f,0.0f,2.0f };
+	triangleData[0].material = { 1.0f,1.0f,1.0f,1.0f };
 
 	/*triangleData[1].v1 = { -0.5f,0.7f,0.0f,2.0f };
 	triangleData[1].v2 = { 0.1f,1.7f,0.0f,2.0f };
