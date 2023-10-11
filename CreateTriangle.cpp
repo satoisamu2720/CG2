@@ -2,9 +2,9 @@
 #include <assert.h>
 #include "SiEngine.h"
 
-void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material) {
+void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material) {
 	dxCommon_ = dxCommon;
-	SettingVertex(a,b,c);
+	SettingVertex(a,b,c,d);
 	SetResource();
 }
 
@@ -26,12 +26,12 @@ void CreateTriangle::Finalize() {
 	materialResource_->Release();
 }
 
-void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c) {
-	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 3);
+void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
+	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 3;
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 4;
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(Vector4);
 	//書き込むためのアドレスを取得
@@ -39,13 +39,15 @@ void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vec
 
 	//左下
 	vertexData_[0] = a;
-	//上
+	//左上
 	vertexData_[1] = b;
-	//右下
+	//右上
 	vertexData_[2] = c;
+	//右下
+	vertexData_[3] = d;
 }
 void CreateTriangle::SetResource() {
-	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 3);
+	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	
 }

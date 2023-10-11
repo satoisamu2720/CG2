@@ -5,17 +5,18 @@ typedef struct Triangle {
 	Vector4 v1;
 	Vector4 v2;
 	Vector4 v3;
+	Vector4 v4;
 	Vector4 material;
 };
 class CreateEngine;
 
 class CreateTriangle {
 public:
-	void Initialize(DirectXCommon* dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
+	void Initialize(DirectXCommon* dxCommon, const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& d, const Vector4& material);
 	void Draw(const Vector4& material);
 	void Finalize();
 private:
-	void SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c);
+	void SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d);
 	void SetResource();
 	
 

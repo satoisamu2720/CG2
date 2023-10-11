@@ -36,7 +36,7 @@ public:
 	void Variable();
 	void Update();
 	void Draw();
-	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
+	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material);
 
 private:
 	static WinApp* win_;
