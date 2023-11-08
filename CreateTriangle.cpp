@@ -5,6 +5,7 @@
 uint16_t CreateTriangle::indices[]{
 	0,1,2,
 	1,2,3,
+	
 };
 
 void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material) {
@@ -15,17 +16,17 @@ void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, cons
 
 void CreateTriangle::Draw(const Vector4& material) {
 	*materialData_ = material;
-	//VBVを設定
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//インデックバッファビューの設定コマンド
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&ibView);
+	//VBVを設定
+	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///マテリアルCBufferの場所を指定
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//描画
-	dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
-	//dxCommon_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
+	//dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
+	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 }
 
 void CreateTriangle::Finalize() {
@@ -36,22 +37,24 @@ void CreateTriangle::Finalize() {
 }
 
 void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
-	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
-	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
+	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
+	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
 
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 6;
+	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 4;
 	//1頂点当たりのサイズ
 	vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
 	ibView.BufferLocation = indexResource_->GetGPUVirtualAddress();
+
 	ibView.Format = DXGI_FORMAT_R16_UINT;
+
 	ibView.SizeInBytes = sizeIB;
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	//左下
 	vertexData_[0] = a;
 	//左上
@@ -90,9 +93,6 @@ ID3D12Resource* CreateTriangle::CreateBufferResource(ID3D12Device* device, size_
 		&ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
 		IID_PPV_ARGS(&Resource));
 	assert(SUCCEEDED(hr));
-
-
-
 
 
 	return Resource;
