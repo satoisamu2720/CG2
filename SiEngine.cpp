@@ -243,7 +243,7 @@ void SiEngine::ScissorRect()
 
 void SiEngine::Draw() {
 	for (int i = 0; i < 10; i++) {
-		triangle_[i]->Draw(triangleData[0].material);
+		triangle_[i]->Draw(triangleData[i].material);
 	}
 	
 }
@@ -255,12 +255,13 @@ void SiEngine::Variable() {
 	triangleData[0].v4 = { 0.6f,1.8f,0.0f,2.0f };
 	triangleData[0].material = { 1.0f,1.0f,1.0f,1.0f };
 
-	/*triangleData[1].v1 = { -0.5f,0.7f,0.0f,2.0f };
-	triangleData[1].v2 = { 0.1f,1.7f,0.0f,2.0f };
+	triangleData[1].v1 = { -0.4f,0.7f,0.0f,2.0f };
+	triangleData[1].v2 = { -0.4f,1.7f,0.0f,2.0f };
 	triangleData[1].v3 = { 0.7f,0.7f,0.0f,2.0f };
+	triangleData[1].v3 = { 0.7f,1.7f,0.0f,2.0f };
 	triangleData[1].material = { 1.0f,1.0f,0.0f,1.0f };
 
-	triangleData[2].v1 = { -0.4f,0.6f,0.0f,2.0f };
+	/*triangleData[2].v1 = { -0.4f,0.6f,0.0f,2.0f };
 	triangleData[2].v2 = { 0.2f,1.6f,0.0f,2.0f };
 	triangleData[2].v3 = { 0.8f,0.6f,0.0f,2.0f };
 	triangleData[2].material = { 1.0f,0.0f,1.0f,1.0f };
@@ -283,7 +284,7 @@ void SiEngine::Variable() {
 
 	for (int i = 0; i < 10; i++) {
 		triangle_[i] = new CreateTriangle();
-		triangle_[i]->Initialize(dxCommon_, triangleData[0].v1, triangleData[0].v2, triangleData[0].v3, triangleData[0].v4, triangleData[0].material);
+		triangle_[i]->Initialize(dxCommon_, triangleData[i].v1, triangleData[i].v2, triangleData[i].v3, triangleData[i].v4, triangleData[i].material);
 	}
 
 	/*for (int i = 0; i < 3; i++) {

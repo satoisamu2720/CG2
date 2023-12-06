@@ -35,5 +35,6 @@ private:
 	ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 	ID3D12Resource* CreateIndexResource(ID3D12Device* device, size_t sizeInBytes);
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+    uint32_t* indexDataSprite = nullptr;
 	int i;
 };
