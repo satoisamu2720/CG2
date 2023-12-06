@@ -326,7 +326,7 @@ void SiEngine::BeginFrame()
 }
 void SiEngine::Update() {
 	ImGui::Begin("Window");
-	ImGui::DragFloat4("Color", &triangleData[0].material.x, 0.01f, triangleData[0].material.y,0.01f);
+	ImGui::DragFloat4("Color", &triangleData[0].material.x, 0.0f,0.0f,1.0f);
 	ImGui::End();
 }
 
