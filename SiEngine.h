@@ -3,6 +3,7 @@
 #include <dxcapi.h>
 #include"Vector4.h"
 #include "CreateTriangle.h"
+#include "Quadrilateral.h"
 #pragma comment(lib,"dxcompiler.lib")
 
 class SiEngine
@@ -37,12 +38,14 @@ public:
 	void Update();
 	void Draw();
 	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material);
-
+	void DrawQuadrilateral(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material);
 private:
 	static WinApp* win_;
 	static	DirectXCommon* dxCommon_;
 	CreateTriangle* triangle_[12];
+	CreateQuadrilateral* quadrilateral_[12];
 	int triangleCount_;
+	int quadrilateralCount_;
 	IDxcUtils* dxcUtils_;
 	IDxcCompiler3* dxcCompiler_;
 	IDxcIncludeHandler* includeHandler_;
@@ -60,7 +63,7 @@ private:
 	D3D12_RECT scissorRect_{};
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
 	Triangle triangleData[10] = {};
-
+	Quadrilateral quadrilateralData[10] = {};
 	Vector4 material;
 
 };

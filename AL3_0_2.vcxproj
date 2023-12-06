@@ -20,6 +20,7 @@
     <ClCompile Include="externals\imgui\imgui_impl_win32.cpp" />
     <ClCompile Include="externals\imgui\imgui_tables.cpp" />
     <ClCompile Include="externals\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Quadrilateral.cpp" />
     <ClCompile Include="SiEngine.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="MyFunction.cpp" />
@@ -50,6 +51,7 @@
     <ClInclude Include="externals\imgui\imstb_rectpack.h" />
     <ClInclude Include="externals\imgui\imstb_textedit.h" />
     <ClInclude Include="externals\imgui\imstb_truetype.h" />
+    <ClInclude Include="Quadrilateral.h" />
     <ClInclude Include="SiEngine.h" />
     <ClInclude Include="MyFunction.h" />
     <ClInclude Include="Vector4.h" />

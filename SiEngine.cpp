@@ -244,17 +244,25 @@ void SiEngine::ScissorRect()
 void SiEngine::Draw() {
 	for (int i = 0; i < 10; i++) {
 		triangle_[i]->Draw(triangleData[i].material);
+		quadrilateral_[i]->Draw(quadrilateralData[i].material);
 	}
 	
 }
 void SiEngine::Variable() {
 
 	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
-	triangleData[0].v2 = { 0.0f,1.8f,0.0f,2.0f };
+	triangleData[0].v2 = { 0.6f,1.8f,0.0f,2.0f };
 	triangleData[0].v3 = { 0.6f,0.8f,0.0f,2.0f };
 	triangleData[0].material = { 1.0f,0.0f,0.0f,1.0f };
 
-	triangleData[1].v1 = { -0.5f,0.7f,0.0f,2.0f };
+	quadrilateralData[0].v1 = { -0.6f,-0.8f,0.0f,2.0f };
+	quadrilateralData[1].v2 = { -0.6f,-0.8f,0.0f,2.0f };
+	quadrilateralData[2].v3 = { 0.6f,-0.8f,0.0f,2.0f };
+	quadrilateralData[3].v4 = { 0.6f,-1.8f,0.0f,2.0f };
+	quadrilateralData[0].material = { 1.0f,0.0f,1.0f,1.0f };
+
+
+	/*triangleData[1].v1 = { -0.5f,0.7f,0.0f,2.0f };
 	triangleData[1].v2 = { 0.1f,1.7f,0.0f,2.0f };
 	triangleData[1].v3 = { 0.7f,0.7f,0.0f,2.0f };
 	triangleData[1].material = { 1.0f,1.0f,0.0f,1.0f };
@@ -278,17 +286,14 @@ void SiEngine::Variable() {
 	triangleData[5].v2 = { 0.5f,1.3f,0.0f,2.0f };
 	triangleData[5].v3 = { 1.1f,0.3f,0.0f,2.0f };
 	triangleData[5].material = { 1.0f,1.0f,1.0f,1.0f };
-
+*/
 
 	for (int i = 0; i < 10; i++) {
 		triangle_[i] = new CreateTriangle();
 		triangle_[i]->Initialize(dxCommon_, triangleData[i].v1, triangleData[i].v2, triangleData[i].v3, triangleData[i].material);
+		quadrilateral_[i] = new CreateQuadrilateral();
+		quadrilateral_[i]->Initialize(dxCommon_, quadrilateralData[i].v1, quadrilateralData[i].v2, quadrilateralData[i].v3, quadrilateralData[i].v4, quadrilateralData[i].material);
 	}
-
-	/*for (int i = 0; i < 3; i++) {
-		triangle_[i] = new CreateTriangle();
-		triangle_[i]->Initialize(dxCommon_,triangleData1, triangleData2, triangleData3,material );
-	}*/
 	
 }
 void SiEngine::Finalize()
@@ -296,6 +301,7 @@ void SiEngine::Finalize()
 	for (int i = 0; i < 10; i++)
 	{
 		triangle_[i]->Finalize();
+		quadrilateral_[i]->Finalize();
 	}
 	graphicsPipelineState_->Release();
 	signatureBlob_->Release();
@@ -311,6 +317,7 @@ void SiEngine::Finalize()
 void SiEngine::BeginFrame()
 {
 	triangleCount_ = 0;
+	quadrilateralCount_ = 0;
 	dxCommon_->PreDraw();
 	//viewportを設定
 	dxCommon_->GetCommandList()->RSSetViewports(1, &viewport_);
@@ -327,6 +334,7 @@ void SiEngine::BeginFrame()
 void SiEngine::Update() {
 	ImGui::Begin("Window");
 	ImGui::DragFloat4("Color", &triangleData[0].material.x, 0.0f,0.0f,1.0f);
+	ImGui::DragFloat4("QColor", &quadrilateralData[0].material.x, 0.0f, 0.0f, 1.0f);
 	ImGui::End();
 }
 
@@ -343,4 +351,10 @@ void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c
 	triangleCount_++;
 		triangle_[triangleCount_]->Draw(material);
 	
+}
+void SiEngine::DrawQuadrilateral(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material)
+{
+	quadrilateralCount_++;
+	quadrilateral_[quadrilateralCount_]->Draw(material);
+
 }
