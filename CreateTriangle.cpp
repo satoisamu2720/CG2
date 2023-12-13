@@ -9,6 +9,7 @@ void CreateTriangle::Initialize(DirectXCommon * dxCommon, const Vector4& a, cons
 }
 
 void CreateTriangle::Draw(const Vector4& material) {
+
 	*materialData_ = material;
 	//VBVを設定
 	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
@@ -18,6 +19,7 @@ void CreateTriangle::Draw(const Vector4& material) {
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//描画
 	dxCommon_->GetCommandList()->DrawInstanced(3, 1, 0, 0);
+
 }
 
 void CreateTriangle::Finalize() {

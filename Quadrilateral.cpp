@@ -3,8 +3,7 @@
 
 uint16_t CreateQuadrilateral::indices[]{
 	0,1,2,
-	1,2,3,
-
+	2,3,0,
 };
 
 void CreateQuadrilateral::Initialize(DirectXCommon* dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material) {
@@ -37,7 +36,7 @@ void CreateQuadrilateral::Finalize() {
 
 void CreateQuadrilateral::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
 	//vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
-	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
+	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 
 	////リソースの先頭のアドレスから使う
 	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -46,7 +45,7 @@ void CreateQuadrilateral::SettingVertex(const Vector4& a, const Vector4& b, cons
 	////1頂点当たりのサイズ
 	//vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
-	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
+	ibView.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
 	ibView.Format = DXGI_FORMAT_R16_UINT;
 
@@ -120,7 +119,7 @@ ID3D12Resource* CreateQuadrilateral::CreateIndexResource(ID3D12Device* device, s
 		IID_PPV_ARGS(&indexBuff));
 	assert(SUCCEEDED(hr));
 
-	uint16_t* indexMap = nullptr;
+	uint32_t* indexMap = nullptr;
 	hr = indexBuff->Map(0, nullptr, (void**)&indexMap);
 	for (int i = 0; i < _countof(indices); i++) {
 		indexMap[i] = indices[i];
