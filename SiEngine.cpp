@@ -294,7 +294,6 @@ void SiEngine::Variable() {
 		quadrilateral_[i] = new CreateQuadrilateral();
 		quadrilateral_[i]->Initialize(dxCommon_, quadrilateralData[i].v1, quadrilateralData[i].v2, quadrilateralData[i].v3, quadrilateralData[i].v4, quadrilateralData[i].material);
 	}
-	
 }
 void SiEngine::Finalize()
 {

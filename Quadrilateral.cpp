@@ -18,7 +18,7 @@ void CreateQuadrilateral::Draw(const Vector4& material) {
 	//インデックバッファビューの設定コマンド
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&ibView);
 	//VBVを設定
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+    //dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///マテリアルCBufferの場所を指定
@@ -39,14 +39,14 @@ void CreateQuadrilateral::SettingVertex(const Vector4& a, const Vector4& b, cons
 	//vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
 	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
 
-	//リソースの先頭のアドレスから使う
+	////リソースの先頭のアドレスから使う
 	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	////使用するリソースのサイズは頂点3つ分のサイズ
-	//ibView.SizeInBytes = sizeof(Vector4) * 4;
+	//vertexBufferView_.SizeInBytes = sizeof(Vector4) * 4;
 	////1頂点当たりのサイズ
 	//vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
-	ibView.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
 
 	ibView.Format = DXGI_FORMAT_R16_UINT;
 
@@ -65,10 +65,9 @@ void CreateQuadrilateral::SettingVertex(const Vector4& a, const Vector4& b, cons
 }
 
 void CreateQuadrilateral::SetResource() {
-	//materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
-	materialResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
+	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
+	//materialResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
-
 }
 ID3D12Resource* CreateQuadrilateral::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	//頂点リソース用のヒープの設定
@@ -114,7 +113,7 @@ ID3D12Resource* CreateQuadrilateral::CreateIndexResource(ID3D12Device* device, s
 	ResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 	HRESULT hr;
 
-	ID3D12Resource* indexBuff = nullptr;
+	
 	//実際に頂点リソースを作る
 	hr = device->CreateCommittedResource(&uplodeHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
