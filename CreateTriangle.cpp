@@ -18,7 +18,7 @@ void CreateTriangle::Draw(const Vector4& material) {
 	//インデックバッファビューの設定コマンド
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&ibView);
 	//VBVを設定
-	dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
+	//dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///マテリアルCBufferの場所を指定
@@ -30,39 +30,39 @@ void CreateTriangle::Draw(const Vector4& material) {
 
 void CreateTriangle::Finalize() {
 
-	vertexResource_->Release();
+	//vertexResource_->Release();
 	indexResource_->Release();
 	materialResource_->Release();
 }
 
 void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
-	int SpriteIndex = kMaxSpriteVertex + 1;
+	//int SpriteIndex = kMaxSpriteVertex + 1;
 
-	for (int i = 0; i < kMaxSprite; ++i) {
-		if (IsusedSpriteIndex[i] == false) {
-			SpriteIndex = (i * 6);
-			IsusedSpriteIndex[i] = true;
-			break;
-		}
-	}
-	if (SpriteIndex < 0) {
-		//0より少ない
-		assert(false);
-	}
-	if (kMaxSpriteVertex < SpriteIndex) {
-		//MaxSpriteより多い
-		assert(false);
-	}
+	//for (int i = 0; i < kMaxSprite; ++i) {
+	//	if (IsusedSpriteIndex[i] == false) {
+	//		SpriteIndex = (i * 6);
+	//		IsusedSpriteIndex[i] = true;
+	//		break;
+	//	}
+	//}
+	//if (SpriteIndex < 0) {
+	//	//0より少ない
+	//	assert(false);
+	//}
+	//if (kMaxSpriteVertex < SpriteIndex) {
+	//	//MaxSpriteより多い
+	//	assert(false);
+	//}
 
-	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
+	//vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 
-	//リソースの先頭のアドレスから使う
-	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	//使用するリソースのサイズは頂点3つ分のサイズ
-	vertexBufferView_.SizeInBytes = sizeof(Vector4) * 6;
-	//1頂点当たりのサイズ
-	vertexBufferView_.StrideInBytes = sizeof(Vector4);
+	////リソースの先頭のアドレスから使う
+	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
+	////使用するリソースのサイズは頂点3つ分のサイズ
+	//vertexBufferView_.SizeInBytes = sizeof(Vector4) * 6;
+	////1頂点当たりのサイズ
+	//vertexBufferView_.StrideInBytes = sizeof(Vector4);
 
 	ibView.BufferLocation = indexResource_->GetGPUVirtualAddress();
 
@@ -70,8 +70,8 @@ void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vec
 
 	ibView.SizeInBytes = sizeIB;
 	//書き込むためのアドレスを取得
-	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	//左下
 	vertexData_[0] = a;
 	//左上
@@ -90,8 +90,8 @@ void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vec
 
 }
 void CreateTriangle::SetResource() {
-	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
-	//materialResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
+	//materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
+	materialResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 	
 }
