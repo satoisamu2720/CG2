@@ -13,9 +13,9 @@ void CreateQuadrilateral::Initialize(DirectXCommon* dxCommon, const Vector4& a, 
 }
 
 void CreateQuadrilateral::Draw(const Vector4& material) {
-	*materialData_ = material;
+	*materialDataSprite_ = material;
 	//インデックバッファビューの設定コマンド
-	dxCommon_->GetCommandList()->IASetIndexBuffer(&ibView);
+	dxCommon_->GetCommandList()->IASetIndexBuffer(&indexBufferViewSprite);
 	//VBVを設定
     //dxCommon_->GetCommandList()->IASetVertexBuffers(0, 1, &vertexBufferView_);
 	//形状を設定。PS0に設定しているものとはまた別。同じものを設定する
@@ -24,49 +24,45 @@ void CreateQuadrilateral::Draw(const Vector4& material) {
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//描画
 	//dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
-	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+	dxCommon_->GetCommandList()->DrawIndexedInstanced(6, 1, 0, 0, 0);
 }
 
 void CreateQuadrilateral::Finalize() {
 
-	//vertexResource_->Release();
-	indexResource_->Release();
+	vertexResourceSprite_->Release();
+	//indexResourceSprite_->Release();
 	materialResource_->Release();
 }
 
 void CreateQuadrilateral::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
-	//vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
-	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
+	vertexResourceSprite_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 4);
+	//indexResourceSprite_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 
-	////リソースの先頭のアドレスから使う
-	//vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
-	////使用するリソースのサイズは頂点3つ分のサイズ
-	//vertexBufferView_.SizeInBytes = sizeof(Vector4) * 4;
-	////1頂点当たりのサイズ
-	//vertexBufferView_.StrideInBytes = sizeof(Vector4);
+	//リソースの先頭のアドレスから使う
+	vertexBufferViewSprite_.BufferLocation = vertexResourceSprite_->GetGPUVirtualAddress();
+	//使用するリソースのサイズは頂点3つ分のサイズ
+	vertexBufferViewSprite_.SizeInBytes = sizeof(Vector4) * 6;
+	//1頂点当たりのサイズ
+	vertexBufferViewSprite_.StrideInBytes = sizeof(Vector4);
 
-	ibView.BufferLocation = indexResource_->GetGPUVirtualAddress();
+	/*indexBufferViewSprite.BufferLocation = indexResourceSprite_->GetGPUVirtualAddress();
 
-	ibView.Format = DXGI_FORMAT_R16_UINT;
+	indexBufferViewSprite.SizeInBytes = sizeIB;
 
-	ibView.SizeInBytes = sizeIB;
+	indexBufferViewSprite.Format = DXGI_FORMAT_R16_UINT;*/
+
 	//書き込むためのアドレスを取得
-	//vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
-	//左下
-	vertexData_[0] = a;
-	//左上
-	vertexData_[1] = b;
-	//右上
-	vertexData_[2] = c;
-	//右下
-	vertexData_[3] = d;
+	vertexResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite_));
+	//indexResourceSprite_->Map(0, nullptr, reinterpret_cast<void**>(&indexDataSprite));
+
+	vertexDataSprite_[0] = a;   vertexDataSprite_[1] = b;   vertexDataSprite_[2] = d;
+	vertexDataSprite_[3] = b;   vertexDataSprite_[4] = c;   vertexDataSprite_[5] = d;
 }
 
 void CreateQuadrilateral::SetResource() {
 	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 	//materialResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
-	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
+	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialDataSprite_));
 }
 ID3D12Resource* CreateQuadrilateral::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	//頂点リソース用のヒープの設定
@@ -113,21 +109,13 @@ ID3D12Resource* CreateQuadrilateral::CreateIndexResource(ID3D12Device* device, s
 	HRESULT hr;
 
 	
+	ID3D12Resource* Resource = nullptr;
 	//実際に頂点リソースを作る
 	hr = device->CreateCommittedResource(&uplodeHeapProperties, D3D12_HEAP_FLAG_NONE,
 		&ResourceDesc, D3D12_RESOURCE_STATE_GENERIC_READ, nullptr,
-		IID_PPV_ARGS(&indexBuff));
+		IID_PPV_ARGS(&Resource));
 	assert(SUCCEEDED(hr));
 
-	uint32_t* indexMap = nullptr;
-	hr = indexBuff->Map(0, nullptr, (void**)&indexMap);
-	for (int i = 0; i < _countof(indices); i++) {
-		indexMap[i] = indices[i];
-	}
-	indexBuff->Unmap(0, nullptr);
-	//
 
-	return indexBuff;
-	//return Resource;
-
+	return Resource;
 }

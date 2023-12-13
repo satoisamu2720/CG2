@@ -1,6 +1,7 @@
 #pragma once
 #include"DirectXCommon.h"
 #include"Vector4.h"
+
 typedef struct Quadrilateral {
 	Vector4 v1;
 	Vector4 v2;
@@ -24,18 +25,24 @@ private:
 	Quadrilateral* Engine_;
 	DirectXCommon* dxCommon_;
 	D3D12_HEAP_PROPERTIES uplodeHeapProperties{};
-	Vector4* vertexData_;
-	Vector4* materialData_;
+	Vector4* vertexDataSprite_;
+	Vector4* materialDataSprite_;
 	D3D12_RESOURCE_DESC ResourceDesc{};
-	D3D12_INDEX_BUFFER_VIEW ibView{};
+	
 	//インデックスデータ全体のサイズ
 	UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
-	ID3D12Resource* vertexResource_;
+	ID3D12Resource* vertexResourceSprite_;
 	ID3D12Resource* materialResource_;
-	ID3D12Resource* indexResource_;
+	
 	ID3D12Resource* CreateBufferResource(ID3D12Device* device, size_t sizeInBytes);
 	ID3D12Resource* CreateIndexResource(ID3D12Device* device, size_t sizeInBytes);
-	//D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
+	D3D12_VERTEX_BUFFER_VIEW vertexBufferViewSprite_;
 	int i;
 	ID3D12Resource* indexBuff = nullptr;
+
+
+	ID3D12Resource* indexResourceSprite_;
+	D3D12_INDEX_BUFFER_VIEW indexBufferViewSprite{};
+	uint32_t* indexDataSprite = nullptr;
+
 };
