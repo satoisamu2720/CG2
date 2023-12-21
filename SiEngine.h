@@ -61,6 +61,10 @@ private:
 	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
 	Triangle triangleData[10] = {};
 
+	  Matrix4x4* transformationMatrixData_;
+	Transform transform_;
+	Transform cameraTransform_; 
+	Matrix4x4 worldMatrix_;
 	Vector4 material;
 
 };

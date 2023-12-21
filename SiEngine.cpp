@@ -110,10 +110,14 @@ void SiEngine::CreateRootSignature()
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
 	//RootParameter作成、複数設定可能な為、配列に
-	D3D12_ROOT_PARAMETER rootParameters[1] = {};
+	D3D12_ROOT_PARAMETER rootParameters[2] = {};
 	rootParameters[0].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
 	rootParameters[0].ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//PixelShaderで使う
 	rootParameters[0].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+	rootParameters[1].ParameterType = D3D12_ROOT_PARAMETER_TYPE_CBV;//CBVを使う
+	rootParameters[1].ShaderVisibility = D3D12_SHADER_VISIBILITY_VERTEX;//VertexShaderで使う
+	rootParameters[1].Descriptor.ShaderRegister = 0;//レジスタ番号0とバインド
+
 	descriptionRootSignature.pParameters = rootParameters;//ルートパラメータ配列へのポインタ
 	descriptionRootSignature.NumParameters = _countof(rootParameters);//配列の長さ
 
@@ -243,11 +247,14 @@ void SiEngine::ScissorRect()
 
 void SiEngine::Draw() {
 	for (int i = 0; i < 10; i++) {
-		triangle_[i]->Draw(triangleData[i].material);
+		triangle_[i]->Draw(triangleData[i].material, worldMatrix_);
 	}
 	
 }
 void SiEngine::Variable() {
+
+	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
+	cameraTransform_ = { {1.0f, 1.0f, 1.0f}, { 0.0f,0.0f,0.0f }, { 0.0f,0.0f,-5.0f } };
 
 	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
 	triangleData[0].v2 = { -0.6f,1.8f,0.0f,2.0f };
@@ -281,6 +288,8 @@ void SiEngine::Variable() {
 	triangleData[5].v2 = { 0.5f,1.3f,0.0f,2.0f };
 	triangleData[5].v3 = { 1.1f,0.3f,0.0f,2.0f };
 	triangleData[5].material = { 1.0f,1.0f,1.0f,1.0f };*/
+
+	
 
 
 	for (int i = 0; i < 10; i++) {
@@ -328,9 +337,20 @@ void SiEngine::BeginFrame()
 	
 }
 void SiEngine::Update() {
+
 	ImGui::Begin("Window");
 	ImGui::DragFloat4("Color", &triangleData[0].material.x, 0.01f, triangleData[0].material.y,0.01f);
 	ImGui::End();
+
+	transform_.rotate.num[1] += 0.03f;
+	 worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
+	/*Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
+	Matrix4x4 viewMatrix = Inverse(cameraMatrix);
+	Matrix4x4 projectionMatrix = MakePerspectiveFovMatrix(0.45f, float(winApp_->GetkClientWidth())/ float(winApp_->GetkClientWidth()), 0.1f, 100.0f);
+	Matrix4x4 worldViewProjectionMatrix= Multiply(worldMatrix_, Multiply(viewMatrix, projectionMatrix));
+
+	*transformationMatrixData_ = worldViewProjectionMatrix;*/
+	//worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 }
 
 void SiEngine::EndFrame()
@@ -344,6 +364,6 @@ void SiEngine::EndFrame()
 void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d,const Vector4& material)
 {
 	triangleCount_++;
-		triangle_[triangleCount_]->Draw(material);
+		triangle_[triangleCount_]->Draw(material, worldMatrix_);
 	
 }

@@ -12,10 +12,12 @@ void CreateTriangle::Initialize(DirectXCommon* dxCommon, const Vector4& a, const
 	dxCommon_ = dxCommon;
 	SettingVertex(a, b, c, d);
 	SetResource();
+	MoveMatrix();
 }
 
-void CreateTriangle::Draw(const Vector4& material) {
+void CreateTriangle::Draw(const Vector4& material, const Matrix4x4& data) {
 	*materialData_ = material;
+	*wvpData_ = data;
 	//インデックバッファビューの設定コマンド
 	dxCommon_->GetCommandList()->IASetIndexBuffer(&ibView);
 	//VBVを設定
@@ -24,6 +26,8 @@ void CreateTriangle::Draw(const Vector4& material) {
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///マテリアルCBufferの場所を指定
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
+	//wvp用のCBufferの場所を設定
+	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	//描画4角形
 	//dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 10, 0, 0, 0);
@@ -34,12 +38,14 @@ void CreateTriangle::Finalize() {
 	vertexResource_->Release();
 	indexResource_->Release();
 	materialResource_->Release();
+	wvpResource_->Release();
 }
 
 void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d) {
 	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 	indexResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 
+	
 	//リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
 	//使用するリソースのサイズは頂点3つ分のサイズ
@@ -54,6 +60,8 @@ void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vec
 	ibView.SizeInBytes = sizeIB;
 	//書き込むためのアドレスを取得
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
+	
+
 	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	//左下
 	vertexData_[0] = a;
@@ -69,6 +77,16 @@ void CreateTriangle::SetResource() {
 	//materialResource_ = CreateIndexResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 
+}
+
+void CreateTriangle::MoveMatrix()
+{
+	//Matrix4x4　1つ分のサイズを用意する
+	wvpResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Matrix4x4));
+	//書き込む為のアドレスを取得
+	wvpResource_->Map(0, nullptr, reinterpret_cast<void**>(&wvpData_));
+	//単位行列を書き込んでおく
+	*wvpData_ = MakeIdentity4x4();
 }
 
 

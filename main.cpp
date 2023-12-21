@@ -7,6 +7,7 @@ const wchar_t kWindowTitle[] = { L"CG2" };
 
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
+	CoInitializeEx(0, COINIT_MULTITHREADED);
 	//初期化
 
 	WinApp* win_ = nullptr;
@@ -36,5 +37,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	OutputDebugStringA("Hello,DirectX!\n");
 	engin_->Finalize();
+
+	CoUninitialize();
 	return 0;
 }
