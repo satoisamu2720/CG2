@@ -1,7 +1,4 @@
-//float4 main() : SV_TARGET
-//{
-//	return float4(1.0f, 1.0f, 1.0f, 1.0f);
-//}
+#include "Object3d.hlsli"
 struct Material {
 	float32_t4 color;
 };

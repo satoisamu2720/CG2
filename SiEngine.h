@@ -3,6 +3,7 @@
 #include <dxcapi.h>
 #include"Vector4.h"
 #include "CreateTriangle.h"
+#include "externals/DirectXTex/DirectXTex.h"
 #pragma comment(lib,"dxcompiler.lib")
 
 class SiEngine
@@ -37,7 +38,9 @@ public:
 	void Update();
 	void Draw();
 	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material);
+	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
+	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureHandleGPU() { return textureSrvHandleGPU_; }
 private:
 	static WinApp* win_;
 	static	DirectXCommon* dxCommon_;
@@ -58,7 +61,7 @@ private:
 	D3D12_VERTEX_BUFFER_VIEW vertexBufferView_;
 	D3D12_VIEWPORT viewport_{};
 	D3D12_RECT scissorRect_{};
-	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[1];
+	D3D12_INPUT_ELEMENT_DESC inputElementDescs_[2];
 	Triangle triangleData[10] = {};
 
 	  Matrix4x4* transformationMatrixData_;
@@ -67,4 +70,14 @@ private:
 	Matrix4x4 worldMatrix_;
 	Vector4 material;
 
+	ID3D12Resource* textureResource_ = nullptr;
+
+	D3D12_CPU_DESCRIPTOR_HANDLE textureSrvHandleCPU_;
+	D3D12_GPU_DESCRIPTOR_HANDLE textureSrvHandleGPU_;
+
+	DirectX::ScratchImage OpenImage(const std::string& filePath);
+
+	ID3D12Resource* CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata);
+
+	void UploadTexturData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages);
 };

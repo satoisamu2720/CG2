@@ -64,13 +64,17 @@ void CreateTriangle::SettingVertex(const Vector4& a, const Vector4& b, const Vec
 
 	//indexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 	//左下
-	vertexData_[0] = a;
+	vertexData_[0].position = a;
+	vertexData_[0].texcoord = { 0.0f,1.0f };
 	//左上
-	vertexData_[1] = b;
+	vertexData_[1].position = b;
+	vertexData_[1].texcoord = { 0.0f,0.0f };
 	//右上
-	vertexData_[2] = c;
+	vertexData_[2].position = c;
+	vertexData_[2].texcoord = { 1.0f,0.0f };
 	//右下
-	vertexData_[3] = d;
+	vertexData_[3].position = d;
+	vertexData_[3].texcoord = { 1.0f,1.0f };
 }
 void CreateTriangle::SetResource() {
 	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4) * 6);

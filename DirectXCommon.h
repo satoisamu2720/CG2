@@ -28,6 +28,7 @@ public:
 	ID3D12GraphicsCommandList* GetCommandList() { return commandList_; }
 
 	
+	ID3D12DescriptorHeap* GetSrvDescriptorHeap() { return srvDescriptorHeap_; }
 
 private:
 	static WinApp* winApp_;

@@ -1,7 +1,8 @@
 #pragma once
 #include"DirectXCommon.h"
-#include"Vector4.h"
+#include"Vector.h"
 #include"Matrix.h"
+
 typedef struct Triangle {
 	Vector4 v1;
 	Vector4 v2;
@@ -27,7 +28,7 @@ private:
 	CreateEngine* Engine_;
 	DirectXCommon* dxCommon_;
 	D3D12_HEAP_PROPERTIES uplodeHeapProperties{};
-	Vector4* vertexData_;
+	VertexData* vertexData_;
 	Vector4* materialData_;
 	Matrix4x4* wvpData_ = nullptr;
 	D3D12_RESOURCE_DESC ResourceDesc{};

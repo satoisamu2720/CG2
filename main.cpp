@@ -11,11 +11,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//初期化
 
 	WinApp* win_ = nullptr;
-	SiEngine* engin_ = new SiEngine;
+	SiEngine* engine_ = new SiEngine;
 	DirectXCommon* dxCommon_ = new DirectXCommon;
-	engin_->Initialize(win_, kWindowTitle, 1280, 720);
-
-	engin_->Variable();
+	engine_->Initialize(win_, kWindowTitle, 1280, 720);
+	engine_->LoadTexture("resources/uvChecker.png");
+	engine_->Variable();
 
 	MSG msg{};
 	
@@ -29,14 +29,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		}
 		else {
-			engin_->BeginFrame();
-			engin_->Draw();
-			engin_->Update();
-			engin_->EndFrame();
+			engine_->BeginFrame();
+			engine_->Draw();
+			engine_->Update();
+			engine_->EndFrame();
 		}
 	}
 	OutputDebugStringA("Hello,DirectX!\n");
-	engin_->Finalize();
+	engine_->Finalize();
 
 	CoUninitialize();
 	return 0;
