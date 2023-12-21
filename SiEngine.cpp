@@ -248,6 +248,11 @@ void SiEngine::Draw() {
 	}
 	
 }
+void SiEngine::DrawSprite(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material)
+{
+	spriteCount_++;
+	sprite_[spriteCount_]->Draw(material);
+}
 void SiEngine::Variable() {
 
 	triangleData[0].v1 = { -0.6f,0.8f,0.0f,2.0f };
@@ -352,12 +357,11 @@ void SiEngine::EndFrame()
 	dxCommon_->PostDraw();
 }
 
-void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4&  d,const Vector4& material)
+void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c,const Vector4& material)
 {
 	triangleCount_++;
 		triangle_[triangleCount_]->Draw(material);
 
-		spriteCount_++;
-		sprite_[spriteCount_]->Draw(material);
+		
 	
 }
