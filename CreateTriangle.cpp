@@ -24,7 +24,7 @@ void CreateTriangle::Draw(const Vector4& material) {
 	dxCommon_->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	///マテリアルCBufferの場所を指定
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
-	//描画
+	//描画4角形
 	//dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 10, 0, 0, 0);
 }
