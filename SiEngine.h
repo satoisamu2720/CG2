@@ -40,6 +40,7 @@ public:
 	void DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material);
 	DirectX::ScratchImage LoadTexture(const std::string& filePath);
 
+
 	D3D12_GPU_DESCRIPTOR_HANDLE GetTextureHandleGPU() { return textureSrvHandleGPU_; }
 private:
 	static WinApp* win_;

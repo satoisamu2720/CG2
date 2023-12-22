@@ -5,7 +5,7 @@ Vector3 Normalise(const Vector3& v)
 	float len = Length(v);
 	if (len != 0)
 	{
-		return { v.num[0] / len,v.num[1] / len,v.num[2] / len };
+		return { v.x / len,v.y / len,v.z / len };
 	}
 	return v;
 }
@@ -17,7 +17,7 @@ float Length(const Vector3& v)
 
 float Dot(const Vector3& v1, const Vector3& v2)
 {
-	return v1.num[0] * v2.num[0] + v1.num[1] * v2.num[1] + v1.num[2] * v2.num[2];
+	return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
 }
 
 //X軸回転行列
@@ -117,9 +117,9 @@ Matrix4x4 MakeTranslateMatrix(Vector3 translate)
 	result.m[2][2] = 1.0f;
 	result.m[2][3] = 0.0f;
 
-	result.m[3][0] = translate.num[0];
-	result.m[3][1] = translate.num[1];
-	result.m[3][2] = translate.num[2];
+	result.m[3][0] = translate.x;
+	result.m[3][1] = translate.y;
+	result.m[3][2] = translate.z;
 	result.m[3][3] = 1.0f;
 
 	return result;
@@ -130,19 +130,19 @@ Matrix4x4 MakeScaleMatrix(const Vector3& scale)
 {
 	Matrix4x4 result;
 
-	result.m[0][0] = scale.num[0];
+	result.m[0][0] = scale.x;
 	result.m[0][1] = 0.0f;
 	result.m[0][2] = 0.0f;
 	result.m[0][3] = 0.0f;
 
 	result.m[1][0] = 0.0f;
-	result.m[1][1] = scale.num[1];
+	result.m[1][1] = scale.y;
 	result.m[1][2] = 0.0f;
 	result.m[1][3] = 0.0f;
 
 	result.m[2][0] = 0.0f;
 	result.m[2][1] = 0.0f;
-	result.m[2][2] = scale.num[2];
+	result.m[2][2] = scale.z;
 	result.m[2][3] = 0.0f;
 
 	result.m[3][0] = 0.0f;
@@ -159,9 +159,9 @@ Matrix4x4 MakeAffineMatrix(const Vector3& scale, const Vector3& rotate, const Ve
 	Matrix4x4 result;
 	Matrix4x4 scaleMatrix = MakeScaleMatrix(scale);
 
-	Matrix4x4 rotateXMatrix = MakeRotateXmatrix(rotate.num[0]);
-	Matrix4x4 rotateYMatrix = MakeRotateYmatrix(rotate.num[1]);
-	Matrix4x4 rotateZMatrix = MakeRotateZmatrix(rotate.num[2]);
+	Matrix4x4 rotateXMatrix = MakeRotateXmatrix(rotate.x);
+	Matrix4x4 rotateYMatrix = MakeRotateYmatrix(rotate.y);
+	Matrix4x4 rotateZMatrix = MakeRotateZmatrix(rotate.z);
 	Matrix4x4 rotateXYZMatrix = Multiply(rotateXMatrix, Multiply(rotateYMatrix, rotateZMatrix));
 
 	Matrix4x4 translateMatrix = MakeTranslateMatrix(translate);

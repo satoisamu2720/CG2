@@ -1,5 +1,9 @@
 #pragma once
+
+
 struct Vector3
 {
-	float num[3];
+	float x;
+	float y;
+	float z;
 };

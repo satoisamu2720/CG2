@@ -2,14 +2,16 @@
 #include <assert.h>
 #include "SiEngine.h"
 
+
 uint16_t CreateTriangle::indices[]{
 	0,1,2,
 	1,3,2,
 
 };
 
-void CreateTriangle::Initialize(DirectXCommon* dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material) {
+void CreateTriangle::Initialize(DirectXCommon* dxCommon, const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& d, const Vector4& material, SiEngine* engine) {
 	dxCommon_ = dxCommon;
+	engine_ = engine;
 	SettingVertex(a, b, c, d);
 	SetResource();
 	MoveMatrix();
@@ -28,6 +30,9 @@ void CreateTriangle::Draw(const Vector4& material, const Matrix4x4& data) {
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(0, materialResource_->GetGPUVirtualAddress());
 	//wvp用のCBufferの場所を設定
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
+
+	dxCommon_->GetCommandList()->SetGraphicsRootDescriptorTable(2, engine_->GetTextureHandleGPU());
+
 	//描画4角形
 	//dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
 	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
