@@ -323,7 +323,7 @@ void SiEngine::Finalize()
 	rootSignature_->Release();
 	pixelShaderBlob_->Release();
 	vertexShaderBlob_->Release();
-
+	textureResource_->Release();
 	dxCommon_->Finalize();
 }
 void SiEngine::BeginFrame()
@@ -346,10 +346,11 @@ void SiEngine::Update() {
 
 	ImGui::Begin("Window");
 	ImGui::DragFloat4("Color", &triangleData[0].material.x, 0.01f, triangleData[0].material.y,0.01f);
-	ImGui::DragFloat4("transform_", &transform_.rotate.num[1], 0.01f);
+	ImGui::DragFloat4("transform_X", &transform_.translate.num[0],0.01f);
+	ImGui::DragFloat4("transform_Y", &transform_.translate.num[1], 0.01f);
 	ImGui::End();
 
-	transform_.rotate.num[1] += 0.00f;
+	transform_.rotate.num[1] += 0.03f;
 	 worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 	/*Matrix4x4 cameraMatrix = MakeAffineMatrix(cameraTransform_.scale, cameraTransform_.rotate, cameraTransform_.translate);
 	Matrix4x4 viewMatrix = Inverse(cameraMatrix);

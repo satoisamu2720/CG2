@@ -30,7 +30,7 @@ void CreateTriangle::Draw(const Vector4& material, const Matrix4x4& data) {
 	dxCommon_->GetCommandList()->SetGraphicsRootConstantBufferView(1, wvpResource_->GetGPUVirtualAddress());
 	//描画4角形
 	//dxCommon_->GetCommandList()->DrawInstanced(_countof(indices), 1, 0, 0);
-	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 10, 0, 0, 0);
+	dxCommon_->GetCommandList()->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
 }
 
 void CreateTriangle::Finalize() {
