@@ -1,8 +1,8 @@
-#include "CreateTriangle.h"
+#include "Triangle.h"
 #include <assert.h>
 #include "SiEngine.h"
 
-void CreateTriangle::Initialize(DirectXCommon* dxCommon, SiEngine* engine) {
+void Triangle::Initialize(DirectXCommon* dxCommon, MyEngine* engine) {
 	dxCommon_ = dxCommon;
 	engine_ = engine;
 	SettingVertex();
@@ -10,7 +10,7 @@ void CreateTriangle::Initialize(DirectXCommon* dxCommon, SiEngine* engine) {
 	MoveMatrix();
 }
 
-void CreateTriangle::Draw(
+void Triangle::Draw(
 	const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material,
 	const Matrix4x4& wvpdata) {
 	// 左下
@@ -59,13 +59,13 @@ void CreateTriangle::Draw(
 	dxCommon_->GetCommandList()->DrawInstanced(6, 1, 0, 0);
 }
 
-void CreateTriangle::Release() {
+void Triangle::Release() {
 	materialResource_->Release();
 	vertexResource_->Release();
 	wvpResource_->Release();
 }
 
-void CreateTriangle::SettingVertex() {
+void Triangle::SettingVertex() {
 	vertexResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(VertexData) * 6);
 	// リソースの先頭のアドレスから使う
 	vertexBufferView_.BufferLocation = vertexResource_->GetGPUVirtualAddress();
@@ -77,20 +77,20 @@ void CreateTriangle::SettingVertex() {
 	vertexResource_->Map(0, nullptr, reinterpret_cast<void**>(&vertexData_));
 }
 
-void CreateTriangle::SettingColor() {
+void Triangle::SettingColor() {
 	// マテリアル用のリソースを作る　今回はcolor1つ分
 	materialResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Vector4));
 	// 書き込むためのアドレスを取得
 	materialResource_->Map(0, nullptr, reinterpret_cast<void**>(&materialData_));
 }
 
-void CreateTriangle::MoveMatrix() {
+void Triangle::MoveMatrix() {
 	wvpResource_ = CreateBufferResource(dxCommon_->GetDevice(), sizeof(Matrix4x4));
 	wvpResource_->Map(0, NULL, reinterpret_cast<void**>(&wvpData_));
 	*wvpData_ = MakeIdentity4x4();
 }
 
-ID3D12Resource* CreateTriangle::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
+ID3D12Resource* Triangle::CreateBufferResource(ID3D12Device* device, size_t sizeInBytes) {
 	// 頂点リソース用のヒープの設定
 	D3D12_HEAP_PROPERTIES uplodeHeapProperties{};
 	uplodeHeapProperties.Type = D3D12_HEAP_TYPE_UPLOAD; // UploadHeapを使う

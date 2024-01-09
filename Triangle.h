@@ -6,12 +6,12 @@
 #include "String.h"
 #include "Vertex.h"
 
-class SiEngine;
+class MyEngine;
 
-class CreateTriangle
+class Triangle
 {
 public:
-	void Initialize(DirectXCommon* dxCommon, SiEngine* engine);
+	void Initialize(DirectXCommon* dxCommon, MyEngine* engine);
 
 	void Draw(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material, const Matrix4x4& wvpdata);
 
@@ -27,7 +27,7 @@ private:
 	void MoveMatrix();
 
 private:
-	SiEngine* engine_;
+	MyEngine* engine_;
 
 	DirectXCommon* dxCommon_;
 

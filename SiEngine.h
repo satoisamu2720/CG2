@@ -3,7 +3,7 @@
 #include <dxcapi.h>
 #include "Vector3.h"
 #include"Vector4.h"
-#include "CreateTriangle.h"
+#include "Triangle.h"
 #include "Matrix.h"
 #include "externals/DirectXTex/DirectXTex.h"
 #include "String.h"
@@ -12,7 +12,7 @@
 #pragma comment(lib,"dxcompiler.lib")
 
 
-class SiEngine
+class MyEngine
 {
 public:
 	void Initialize();
@@ -41,7 +41,7 @@ private:
 	static WinApp* winApp_;
 	static	DirectXCommon* dxCommon_;
 
-	CreateTriangle* triangle_[11];
+	Triangle* triangle_[11];
 
 	int triangleCount_;
 
@@ -122,4 +122,4 @@ private:
 	void InitializePSO();
 	void ViewPort();
 	void ScissorRect();
-}; 
+};

@@ -1,12 +1,17 @@
 #include "WinApp.h"
+#include "DirectXCommon.h"
 
 //ウィンドウプロシージャ
-LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
-	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam)) {
+LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
+{
+	if (ImGui_ImplWin32_WndProcHandler(hwnd, msg, wparam, lparam))
+	{
 		return true;
 	}
+
 	//メッセージに応じてゲーム固有の処理を行う
-	switch (msg) {
+	switch (msg)
+	{
 		//ウィンドウが破棄された
 	case WM_DESTROY:
 		// OSに対して、アプリの終了を伝える
@@ -18,7 +23,8 @@ LRESULT CALLBACK WinApp::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM l
 	return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
-void WinApp::CreateWindowView(const wchar_t* title, int32_t kClientWidth_, int32_t kClienHeight_) {
+void WinApp::CreateWindowView(const wchar_t* title, int32_t clientWidth, int32_t clientheight)
+{
 	//ウィンドウプロシージャ
 	wc_.lpfnWndProc = WindowProc;
 	//クラス名
@@ -32,11 +38,11 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t kClientWidth_, int32
 	RegisterClass(&wc_);
 
 	//ウィンドウサイズの構造体にクライアント領域を入れる
-	RECT wrc = { 0,0,kClientWidth_,kClienHeight_ };
+	RECT wrc = { 0,0,kClientWidth,kClientHeight };
 
 	//クライアント領域を元に実際のサイズにwrcを変更してもらう
 	AdjustWindowRect(&wrc, WS_OVERLAPPEDWINDOW, false);
-	
+
 	//ウィンドウの生成
 	hwnd_ = CreateWindow(
 		wc_.lpszClassName,//クラス名
@@ -54,7 +60,8 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t kClientWidth_, int32
 
 #ifdef _DEBUG//デバッグレイヤー
 	debugController_ = nullptr;
-	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_)))) {
+	if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController_))))
+	{
 		//デバッグレイヤーを有効化
 		debugController_->EnableDebugLayer();
 		//GPU側でもチェックを行う
@@ -66,7 +73,8 @@ void WinApp::CreateWindowView(const wchar_t* title, int32_t kClientWidth_, int32
 	ShowWindow(hwnd_, SW_SHOW);
 }
 
-bool WinApp::Procesmessage() {
+bool WinApp::Procesmessage()
+{
 	MSG msg{};
 
 	if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE))

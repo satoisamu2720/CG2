@@ -1,7 +1,7 @@
 #include "SiEngine.h"
 #include <assert.h>
 
-IDxcBlob* SiEngine::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
+IDxcBlob* MyEngine::CompileShader(const std::wstring& filePath, const wchar_t* profile, IDxcUtils* dxcUtils, IDxcCompiler3* dxcCompiler, IDxcIncludeHandler* includeHandler)
 {
 	//これからシェーダーをコンパイルする旨をログに出す
 	Log(ConvertString(std::format(L"Begin CompileShader, path:{},profile:{}\n", filePath, profile)));
@@ -66,7 +66,7 @@ IDxcBlob* SiEngine::CompileShader(const std::wstring& filePath, const wchar_t* p
 	return shaderBlob;
 }
 
-void SiEngine::InitializeDxcCompiler()
+void MyEngine::InitializeDxcCompiler()
 {
 	HRESULT hr;
 	dxcUtils_ = nullptr;
@@ -83,7 +83,7 @@ void SiEngine::InitializeDxcCompiler()
 	assert(SUCCEEDED(hr));
 }
 
-void SiEngine::CreateRootSignature()
+void MyEngine::CreateRootSignature()
 {
 	//RootSignature作成
 	D3D12_ROOT_SIGNATURE_DESC descriptionRootSignature{};
@@ -145,7 +145,7 @@ void SiEngine::CreateRootSignature()
 	assert(SUCCEEDED(hr));
 }
 
-void SiEngine::CreateInputlayOut()
+void MyEngine::CreateInputlayOut()
 {
 	inputElementDescs_[0].SemanticName = "POSITION";
 	inputElementDescs_[0].SemanticIndex = 0;
@@ -161,13 +161,13 @@ void SiEngine::CreateInputlayOut()
 	inputLayoutDesc_.NumElements = _countof(inputElementDescs_);
 }
 
-void SiEngine::BlendState()
+void MyEngine::BlendState()
 {
 	//すべての色要素を書き込む
 	blendDesc_.RenderTarget[0].RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
 }
 
-void SiEngine::RasterizerState()
+void MyEngine::RasterizerState()
 {
 	//裏面（時計回り）を表示しない
 	rasterizerDesc_.CullMode = D3D12_CULL_MODE_BACK;
@@ -185,7 +185,7 @@ void SiEngine::RasterizerState()
 	assert(pixelShaderBlob_ != nullptr);
 }
 
-void SiEngine::InitializePSO()
+void MyEngine::InitializePSO()
 {
 	D3D12_GRAPHICS_PIPELINE_STATE_DESC graphicsPipelineStateDesc{};
 
@@ -227,7 +227,7 @@ void SiEngine::InitializePSO()
 	assert(SUCCEEDED(hr));
 }
 
-void SiEngine::ViewPort()
+void MyEngine::ViewPort()
 {
 	//クライアント領域のサイズと一緒にして画面全体に表示
 	viewport_.Width = WinApp::kClientWidth;
@@ -238,7 +238,7 @@ void SiEngine::ViewPort()
 	viewport_.MaxDepth = 1.0f;
 }
 
-void SiEngine::ScissorRect()
+void MyEngine::ScissorRect()
 {
 	//シザー短形
 	scissorRect_.left = 0;
@@ -247,14 +247,14 @@ void SiEngine::ScissorRect()
 	scissorRect_.bottom = WinApp::kClientHeight;
 }
 
-void SiEngine::Initialize()
+void MyEngine::Initialize()
 {
 	transform_ = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 	transformSprite = { {1.0f,1.0f,1.0f},{0.0f,0.0f,0.0f},{0.0f,0.0f,0.0f} };
 
 	for (int i = 0; i < 5; i++)
 	{
-		triangle_[i] = new CreateTriangle();
+		triangle_[i] = new Triangle();
 		triangle_[i]->Initialize(dxCommon_, this);
 	}
 
@@ -273,7 +273,7 @@ void SiEngine::Initialize()
 
 }
 
-void SiEngine::Initialization(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
+void MyEngine::Initialization(WinApp* win, const wchar_t* title, int32_t width, int32_t height)
 {
 	dxCommon_ = new DirectXCommon();
 	dxCommon_->Initialization(win, title, win->kClientWidth, win->kClientHeight);
@@ -296,7 +296,7 @@ void SiEngine::Initialization(WinApp* win, const wchar_t* title, int32_t width, 
 }
 
 
-void SiEngine::BeginFrame()
+void MyEngine::BeginFrame()
 {
 	triangleCount_ = 0;
 	dxCommon_->PreDraw();
@@ -312,14 +312,14 @@ void SiEngine::BeginFrame()
 	ImGui::ShowDemoWindow();
 }
 
-void SiEngine::EndFrame()
+void MyEngine::EndFrame()
 {
 	ImGui::Render();
 
 	dxCommon_->PostDraw();
 }
 
-void SiEngine::Release()
+void MyEngine::Release()
 {
 	for (int i = 0; i < kMaxTriangle; i++)
 	{
@@ -344,19 +344,19 @@ void SiEngine::Release()
 
 }
 
-void SiEngine::Update()
+void MyEngine::Update()
 {
 	transform_.rotate.y += 0.03f;
 	worldMatrix_ = MakeAffineMatrix(transform_.scale, transform_.rotate, transform_.translate);
 }
 
-void SiEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material)
+void MyEngine::DrawTriangle(const Vector4& a, const Vector4& b, const Vector4& c, const Vector4& material)
 {
 	triangleCount_++;
 	triangle_[triangleCount_]->Draw(a, b, c, material, worldMatrix_);
 }
 
-void SiEngine::DrawSprite(const Vector4& LeftTop, const Vector4& LeftBottom, const Vector4& RightTop, const Vector4& RightBottom) {
+void MyEngine::DrawSprite(const Vector4& LeftTop, const Vector4& LeftBottom, const Vector4& RightTop, const Vector4& RightBottom) {
 	vertexResourceSprite->Map(0, nullptr, reinterpret_cast<void**>(&vertexDataSprite));
 	//1枚目の三角形
 	vertexDataSprite[0].position = LeftBottom;
@@ -399,7 +399,7 @@ void SiEngine::DrawSprite(const Vector4& LeftTop, const Vector4& LeftBottom, con
 
 }
 
-DirectX::ScratchImage SiEngine::LoadTexture(const std::string& filePath)
+DirectX::ScratchImage MyEngine::LoadTexture(const std::string& filePath)
 {
 	DirectX::ScratchImage mipImages = OpenImage(filePath);
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
@@ -427,7 +427,7 @@ DirectX::ScratchImage SiEngine::LoadTexture(const std::string& filePath)
 	return mipImages;
 }
 
-DirectX::ScratchImage SiEngine::OpenImage(const std::string& filePath)
+DirectX::ScratchImage MyEngine::OpenImage(const std::string& filePath)
 {
 	//テクスチャファイルを読んでプログラムで扱えるようにする
 	DirectX::ScratchImage image{};
@@ -444,7 +444,7 @@ DirectX::ScratchImage SiEngine::OpenImage(const std::string& filePath)
 	return mipImages;
 }
 
-ID3D12Resource* SiEngine::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata)
+ID3D12Resource* MyEngine::CreateTextureResource(ID3D12Device* device, const DirectX::TexMetadata& metadata)
 {
 	//metadataを基にResourceの設定
 	D3D12_RESOURCE_DESC resourceDesc{};
@@ -471,7 +471,7 @@ ID3D12Resource* SiEngine::CreateTextureResource(ID3D12Device* device, const Dire
 	return resource;
 }
 
-void SiEngine::UploadTexturData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
+void MyEngine::UploadTexturData(ID3D12Resource* texture, const DirectX::ScratchImage& mipImages)
 {
 	//Meta情報を取得
 	const DirectX::TexMetadata& metadata = mipImages.GetMetadata();
@@ -488,5 +488,5 @@ void SiEngine::UploadTexturData(ID3D12Resource* texture, const DirectX::ScratchI
 	}
 }
 
-WinApp* SiEngine::winApp_;
-DirectXCommon* SiEngine::dxCommon_;
+WinApp* MyEngine::winApp_;
+DirectXCommon* MyEngine::dxCommon_;
